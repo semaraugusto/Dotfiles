@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=browserX-1.41.1-x86_64.AppImage
+Comment=browserX-1.41.1-x86_64.AppImagestartup script
+Exec=/home/semaraugusto/browserX-1.41.1-x86_64.AppImage
+StartupNotify=false
+Terminal=false
