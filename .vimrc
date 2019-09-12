@@ -7,6 +7,64 @@
 " configuration options for each plugin and automatically loaded by Vim.
 source ~/.vim/plugin/plugins.vim
 let g:indent_guides_enable_on_vim_startup = 1
+map <C-o> :NERDTreeToggle<CR>
+
+
+" Syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+
+" FZF
+let mapleader=','
+let g:pymode_folding=0
+" set term=screen-256color
+
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
+let g:fzf_command_prefix = 'Fzf'
+imap <c-x><c-k> <plug>(fzf-complete-word)
+imap <c-x><c-f> <plug>(fzf-complete-path)
+imap <c-x><c-l> <plug>(fzf-complete-buffer-line)
+nnoremap <silent> <leader>f :FzfFiles<CR>
+nnoremap <silent> <leader>F :FzfFiles!<CR>
+nnoremap <silent> <leader>b  :FzfBuffers<CR>
+nnoremap <silent> <leader>l :FzfBLines<CR>
+nnoremap <silent> <leader>`  :FzfMarks<CR>
+nnoremap <silent> <leader>p :FzfCommands<CR>
+nnoremap <silent> <leader>t :FzfFiletypes<CR>
+nnoremap <silent> <F1> :FzfHelptags<CR>
+inoremap <silent> <F1> <ESC>:FzfHelptags<CR>
+cnoremap <silent> <C-_> <C-u>:FzfCommands<CR>
+let g:fzf_history_dir = '~/.local/share/fzf-history'
+
+
+" LEADERF
+
+" search word under cursor, the pattern is treated as regex, and enter normal mode directly
+" noremap <C-F> :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
+" search word under cursor, the pattern is treated as regex,
+" append the result to previous search results.
+" noremap <C-G> :<C-U><C-R>=printf("Leaderf! rg --append -e %s ", expand("<cword>"))<CR>
+" search word under cursor literally only in current buffer
+" noremap <C-B> :<C-U><C-R>=printf("Leaderf! rg -F --current-buffer -e %s ", expand("<cword>"))<CR>
+" search visually selected text literally, don't quit LeaderF after accepting an entry
+" xnoremap gf :<C-U><C-R>=printf("Leaderf! rg -F --stayOpen -e %s ", leaderf#Rg#visual())<CR>
+" recall last search. If the result window is closed, reopen it.
+" noremap go :<C-U>Leaderf! rg --stayOpen --recall<CR>
+
+nmap gb <Plug>(exjumplist-previous-buffer) 
+nmap gn <Plug>(exjumplist-next-buffer) 
+
 
 
 autocmd FileType md,tex inoremap ;M $$$$<Enter><Enter><++><Esc>2k$hi
@@ -60,7 +118,7 @@ set clipboard=unnamedplus
 set autoread                          " Auto reload changed files
 set wildmenu                          " Tab autocomplete in command mode
 set backspace=indent,eol,start        " http://vi.stackexchange.com/a/2163
-set clipboard=unnamed                 " Clipboard support (OSX)
+" set clipboard=unnamed                 " Clipboard support (OSX)
 set laststatus=2                      " Show status line on startup
 set splitright                        " Open new splits to the right
 set splitbelow                        " Open new splits to the bottom
@@ -113,7 +171,8 @@ set sidescrolloff=10  " Leave 10 characters of horizontal buffer when scrolling
 "-------------------------------------------------------------------------------
 " Neovim-specific configurations
 "-------------------------------------------------------------------------------
-colorscheme gruvbox
+" colorscheme gruvbox
+colorscheme nord
 if has('nvim')
   let $NVIM_TUI_ENABLE_TRUE_COLOR=1
   set termguicolors
