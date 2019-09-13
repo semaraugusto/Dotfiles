@@ -17,7 +17,7 @@ Plug 'jremmen/vim-ripgrep'
 Plug 'blarghmatey/split-expander'
 Plug 'farmergreg/vim-lastplace'
 " Plug 'nathanaelkane/vim-indent-guides'
-Plug 'python-mode/python-mode'
+" Plug 'python-mode/python-mode'
 Plug 'raimondi/delimitmate'
 Plug 'yggdroot/indentline'
 " TAGS
@@ -72,7 +72,9 @@ Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-fugitive', { 'commit': '444ba9fda5d05aa14c7e8664fa4a66a59c62a550' }
 
 " Syntax checker
-Plug 'scrooloose/syntastic'
+" Plug 'scrooloose/syntastic'
+Plug 'ycm-core/YouCompleteMe'
+
 
 " Editor config
 Plug 'editorconfig/editorconfig-vim'
