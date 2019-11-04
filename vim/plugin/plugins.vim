@@ -11,37 +11,37 @@ Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-surround'
 Plug 'tmhedberg/matchit'
 Plug 'kana/vim-textobj-user'
-Plug 'nelstrom/vim-textobj-rubyblock'
+Plug 'bps/vim-textobj-python'
 Plug 'vim-scripts/tComment'
 Plug 'jremmen/vim-ripgrep'
 Plug 'blarghmatey/split-expander'
 Plug 'farmergreg/vim-lastplace'
 " Plug 'nathanaelkane/vim-indent-guides'
 " Plug 'python-mode/python-mode'
+Plug 'python-rope/rope'
+Plug 'python-rope/ropemode'
+Plug 'python-rope/ropevim'
+Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
 Plug 'raimondi/delimitmate'
 Plug 'yggdroot/indentline'
-" TAGS
-Plug 'szw/vim-tags'
 
+" Goto previous or next indentation level
+Plug 'jeetsukumaran/vim-indentwise'
 
-Plug 'francoiscabrol/ranger.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 " Find files easily on project
-" Plug 'yggdroot/leaderf'
 Plug 'kana/vim-exjumplist'
 Plug 'vimlab/split-term.vim'
-
-
-
-
-Plug 'epeli/slimux'
-Plug 'itchyny/lightline.vim'
-Plug 'kien/rainbow_parentheses.vim'
 
 " Tmux integration
 Plug 'benmills/vimux'
 Plug 'christoomey/vim-tmux-navigator'
+
+" Plug 'epeli/slimux'
+Plug 'jpalardy/vim-slime'
+Plug 'itchyny/lightline.vim'
+Plug 'kien/rainbow_parentheses.vim'
 
 " File system navigation
 Plug 'tpope/vim-eunuch'
@@ -56,9 +56,9 @@ Plug 'groenewege/vim-less'
 " Plug 'tpope/vim-haml'
 " Plug 'jparise/vim-graphql'
 " Plug 'zerowidth/vim-copy-as-rtf'
-Plug 'Quramy/tsuquyomi'
-Plug 'leafgarland/typescript-vim'
-Plug 'Shougo/vimproc.vim'
+" Plug 'Quramy/tsuquyomi'
+" Plug 'leafgarland/typescript-vim'
+" Plug 'Shougo/vimproc.vim'
 
 
 " Syntax errors
@@ -78,6 +78,9 @@ Plug 'ycm-core/YouCompleteMe'
 
 " Editor config
 Plug 'editorconfig/editorconfig-vim'
+
+" Maximizer
+Plug 'szw/vim-maximizer'
 
 
 " Themes

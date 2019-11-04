@@ -16,18 +16,19 @@
 # }
 #
 # PROMPT_COMMAND=build_prompt
+# eval "$(fasd --init auto)"
 
-export TERM="xterm-256color" 
-export TERM=xterm-color
-export EDITOR='nvim'
 
-alias ssh-server='ssh -X super -p 2959'
-alias ssh_server='ssh -X super -p 2959'
-# alias vim='nvim'
-alias vimrc='nvim ~/.vimrc'
-alias v='nvim'
+export EDITOR="nvim"
+
+alias ssh-server='ssh -X semar@192.168.1.157 -p 2959'
+alias ssh_server='ssh -X semar@192.168.1.157 -p 2959'
+alias v='vim'
 alias p='python'
-
+# alias nvim='vim'
+alias sl='ls'
+alias ..='cd ..'
+alias ...='cd ../..'
 
 # If not running interactively, don't do anything
 case $- in
@@ -66,6 +67,8 @@ fi
 case "$TERM" in
     xterm-color|*-256color) color_prompt=yes;;
 esac
+# fzf
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
@@ -115,7 +118,6 @@ fi
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # some more ls aliases
-alias sl='ls'
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
@@ -144,6 +146,11 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# eval "$(pyenv init -)"
+
+# if command -v pyenv 1>/dev/null 2>&1; then
+#   eval "$(pyenv init -)"
+# fi
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/home/semar/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
@@ -153,21 +160,13 @@ else
     if [ -f "/home/semar/anaconda3/etc/profile.d/conda.sh" ]; then
         . "/home/semar/anaconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/home/semaraugusto/anaconda3/bin:$PATH"
+        export PATH="/home/semar/anaconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
 # <<< conda initialize <<<
 
 
-# added by Anaconda2 4.2.0 installer
-export PATH="/home/semaraugusto/anaconda2/bin:$PATH"
-
-# added by Anaconda3 4.2.0 installer
-# export PATH="/home/semaraugusto/anaconda3/bin:$PATH"
-
-# added by Anaconda3 4.2.0 installer
-export PATH="/home/semaraugusto/anaconda3/bin:$PATH"
 
 # If not running interactively, don't do anything
 case $- in
@@ -176,12 +175,13 @@ case $- in
 esac
 
 # Path to the bash it configuration
-export BASH_IT="/home/semaraugusto/.bash_it"
+export BASH_IT="/home/semar/.bash_it"
 
 # Lock and Load a custom theme file.
 # Leave empty to disable theming.
 # location /.bash_it/themes/
 export BASH_IT_THEME='bakke'
+# export BASH_IT_THEME='bobby'
 
 # (Advanced): Change this to the name of your remote repo if you
 # cloned bash-it with a remote other than origin such as `bash-it`.
@@ -197,10 +197,26 @@ unset MAILCHECK
 export IRC_CLIENT='irssi'
 
 # Set this to the command you use for todo.txt-cli
-export TODO="todoist"
+export TODO="t"
 
 # Set this to false to turn off version control status checking within the prompt for all themes
 export SCM_CHECK=true
+
+export CAFFE_ROOT=/home/semar/MostOcr/crpn/caffe-fast-rcnn
+export PYTHONPATH=/home/semar/MostOcr/crpn/caffe-fast-rcnn/python:
+
+# export PATH="/usr/local/cuda/bin:$PATH"
+# export LD_LIBRARY_PATH="/usr/local/cuda/lib64/"
+
+
+export TF_AUTO_SAVE_CREDENTIALS=1
+
+# export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+# export LD_LIBRARY_PATH=/home/ia/cudnn/cuda:$LD_LIBRARY_PATH
+# export PATH=$PATH:/usr/local/cuda-8.0/bin
+# export PYENV_ROOT=$HOME/.pyenv
+# export PATH=$PATH:$PYENV_ROOT/bin:$PATH
+# export PATH=$PATH:$HOME/.cargo/bin:$PATH
 
 # Set Xterm/screen/Tmux title with only a short hostname.
 # Uncomment this (or set SHORT_HOSTNAME to something else),
@@ -229,51 +245,3 @@ export SCM_CHECK=true
 
 # Load Bash It
 source "$BASH_IT"/bash_it.sh
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/Projects/Proj1
-export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-
-# TODOIST key bindings
-function insert-in-buffer () {
-    if [ -n "$1" ]; then
-        local new_left=""
-        if [ -n "$LBUFFER" ]; then
-            new_left="${new_left}${LBUFFER} "
-        fi
-        if [ -n "$2" ]; then
-            new_left="${new_left}${2} "
-        fi
-        new_left="${new_left}$1"
-        BUFFER=${new_left}${RBUFFER}
-        CURSOR=${#new_left}
-    fi
-}
-
-# <C-x> t t: select task with peco
-# <C-x> t p: select project with peco
-# <C-x> t l: select labels with peco
-# <C-x> t c: select task and close with peco
-# <C-x> t d: select date
-# <C-x> t o: select task, and open it with browser when has url
-
-bind '"\C-xtc": "todoist list | fzf | cut -d \" \" -f 1 | xargs -I {} todoist close "{}"\n" '
-bind '"\C-xtk": "todoist list | fzf | cut -d \" \" -f 1 | xargs -I {} todoist delete "{}"\n" '
-bind '"\C-xtm": "todoist list | fzf | cut -d \" \" -f 1 | xargs -I {} todoist modify \"{}\" -c " '
-bind '"\C-xtl": "todoist list | fzf | cut -d \" \" -f 1 | xargs -I {} todoist show "{}"\n"'
-bind '"\C-xtp": "todoist --project-namespace projects | fzf | cut -d \" \" -f 2 | xargs -I {} todoist list -f "{}"\n"'
-
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-
-
-
-export PATH="/home/semaraugusto/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-
-
