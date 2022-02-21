@@ -2,6 +2,10 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 export PATH=/home/semar/.local/share/cargo/bin/:/home/semar/Projects/circom/target/release:$PATH
 
+. "$HOME/.cargo/env"
+
+if [ -e /home/semar/.nix-profile/etc/profile.d/nix.sh ]; then . /home/semar/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
 [ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
 source /usr/share/nvm/nvm.sh
 source /usr/share/nvm/bash_completion
