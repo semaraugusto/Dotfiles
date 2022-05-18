@@ -12,7 +12,7 @@ end
 M.show_line_hints_on_cursor_events = function()
   vim.cmd [[augroup ShowLineHints]]
   vim.cmd [[  au!]]
-  vim.cmd [[  autocmd CursorHold,CursorHoldI,CursorMoved *.rs :lua require('tj.lsp_extensions').show_line_hints()]]
+  vim.cmd [[  autocmd CursorHold,CursorHoldI,CursorMoved *.rs :lua require('lsp.extensions').show_line_hints()]]
   vim.cmd [[augroup END]]
 end
 

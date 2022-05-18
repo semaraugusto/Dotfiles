@@ -66,6 +66,7 @@ require("telescope").setup({
         ["<C-x>"] = false,
         ["<C-s>"] = actions.select_horizontal,
         ["<C-n>"] = "move_selection_next",
+        ["<esc>"] = actions.close,
 
         ["<C-e>"] = actions.results_scrolling_down,
         ["<C-y>"] = actions.results_scrolling_up,
@@ -114,7 +115,7 @@ require("telescope").setup({
     -- qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
 
     history = {
-      path = "~/.local/share/nvim/telescope_history",
+      path = "~/.local/share/nvim/databases/telescope_history",
       limit = 100,
     },
   },
@@ -140,6 +141,7 @@ require("telescope").setup({
       override_generic_sorter = true,
       override_file_sorter = true,
     },
+
     fzf_writer = {
       use_highlighter = false,
       minimum_grep_characters = 6,
@@ -169,7 +171,33 @@ require("telescope").setup({
         -- even more opts
       },
     },
-  }
+  },
+  textobjects = {
+		select = {
+			enable = true,
+
+			-- Automatically jump forward to textobj, similar to targets.vim
+			lookahead = true,
+
+			keymaps = {
+				-- You can use the capture groups defined in textobjects.scm
+				["af"] = "@function.outer",
+				["if"] = "@function.inner",
+				["ac"] = "@class.outer",
+				["ic"] = "@class.inner",
+			},
+		},
+
+		swap = {
+			enable = true,
+			swap_next = {
+				["<leader>a"] = "@parameter.inner",
+			},
+			swap_previous = {
+				["<leader>A"] = "@parameter.inner",
+			},
+		}
+      }
 })
 --
 --

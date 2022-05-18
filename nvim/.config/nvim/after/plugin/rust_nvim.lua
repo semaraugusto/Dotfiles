@@ -1,10 +1,9 @@
 local has_rust_tools, rust_tools = pcall(require, "rust-tools")
 
-if not has_rust_tools then
-else
+-- local _ = require "lsp.extensions"
+if has_rust_tools then
   local lsp = require "lsp"
   require'luasnip'.filetype_extend("rust", {"rust-analyzer"})
-  -- local lsp = require "lsp_extensions"
   rust_tools.setup {
     tools = { -- rust-tools options
       -- Automatically set inlay hints (type hints)
@@ -39,7 +38,7 @@ else
         -- not that this may cause  higher CPU usage.
         -- This option is only respected when only_current_line and
         -- autoSetHints both are true.
-        only_current_line_autocmd = "CursorHold",
+        -- only_current_line_autocmd = "CursorHold",
 
         -- wheter to show parameter hints with the inlay hints or not
         show_parameter_hints = true,

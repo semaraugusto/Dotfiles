@@ -157,7 +157,7 @@ local servers = {
   pyright = true,
   vimls = true,
   yamlls = true,
-  eslint = true,
+  eslint = false,
 
   cmake = (1 == vim.fn.executable "cmake-language-server"),
   dartls = pcall(require, "flutter-tools"),
@@ -337,17 +337,17 @@ _ = require("nlua.lsp.nvim").setup(lspconfig, {
 -- }
 
 -- Set up null-ls
-local use_null = false
-if use_null then
-  require("null-ls").setup {
-    sources = {
-      -- require("null-ls").builtins.formatting.stylua,
-      -- require("null-ls").builtins.diagnostics.eslint,
-      -- require("null-ls").builtins.completion.spell,
-      require("null-ls").builtins.diagnostics.selene,
-    },
-  }
-end
+-- local use_null = false
+-- if use_null then
+--   require("null-ls").setup {
+--     sources = {
+--       require("null-ls").builtins.formatting.stylua,
+--       require("null-ls").builtins.diagnostics.eslint,
+--       require("null-ls").builtins.completion.spell,
+--       require("null-ls").builtins.diagnostics.selene,
+--     },
+--   }
+-- end
 
 return {
   on_init = custom_init,
