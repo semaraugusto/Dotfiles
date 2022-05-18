@@ -10,7 +10,7 @@ local c = ls.choice_node
 local f = ls.function_node
 local fmt = require("luasnip.extras.fmt").fmt
 
-local shared = R "snips"
+local shared = R "user.snips"
 local same = shared.same
 
 local newline = function(text)

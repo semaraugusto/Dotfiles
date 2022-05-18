@@ -1,9 +1,10 @@
 local has_rust_tools, rust_tools = pcall(require, "rust-tools")
 
+require'luasnip'.filetype_extend("rust", {"rails"})
+require'luasnip'.filetype_extend("rust", {"rust-analyzer"})
 -- local _ = require "lsp.extensions"
 if has_rust_tools then
-  local lsp = require "lsp"
-  require'luasnip'.filetype_extend("rust", {"rust-analyzer"})
+  local lsp = require "user.lsp"
   rust_tools.setup {
     tools = { -- rust-tools options
       -- Automatically set inlay hints (type hints)

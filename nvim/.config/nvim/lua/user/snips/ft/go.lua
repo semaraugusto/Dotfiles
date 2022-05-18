@@ -12,7 +12,7 @@ local d = ls.dynamic_node
 local c = ls.choice_node
 local fmt = require("luasnip.extras.fmt").fmt
 
-local shared = R "snips"
+local shared = R "user.snips"
 local same = shared.same
 local make = shared.make
 

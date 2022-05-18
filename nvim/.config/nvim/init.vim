@@ -142,7 +142,7 @@ set wildignore+=**/.git/*
 
 let mapleader=','
 " status line
-lua require("plugins")
+lua require("user.plugins")
 
 " Automatically run :CratesToggle when opening a Cargo.toml file:
 if has('nvim')
@@ -179,7 +179,7 @@ vnoremap <leader>y "+y
 vnoremap <leader>p "+p
 nnoremap <leader>p "+p
 nnoremap <leader>Y gg"+yG
-nnoremap <leader><leader>s <cmd>source ~/.config/nvim/after/plugin/luasnip.lua<CR>
+nnoremap <leader><leader>s <cmd>source ~/.config/nvim/lua/user/luasnip.lua<CR>
 
 " Delete remaps
 nnoremap <leader>d "_d
@@ -227,7 +227,7 @@ set mouse=a
 
 
 let g:rustfmt_autosave = 1
-" let g:snippets = "luasnip"
+let g:snippets = "luasnip"
 
 nnoremap <silent> <C-S-Up>      :m .-2<CR>==
 nnoremap <silent> <C-S-Down>    :m .+1<CR>==
@@ -266,17 +266,32 @@ lua <<EOF
   set_cursorline("WinLeave", false)
   set_cursorline("WinEnter", true)
   set_cursorline("FileType", false, "TelescopePrompt")
-  require("globals")
-  require("telescope_config")
-  require("lsp.dap")
-  require("telescope_config.setup")
-  require("telescope_config.mappings")
+  require("user.globals")
+  require("user.lsp.dap")
+  require("user.telescope.init")
+  require("user.telescope.setup")
+  require("user.telescope.mappings")
+  require("user.luasnip")
+
+  require("hop").setup { keys = 'asdfghjkl;', jump_on_sole_occurrence = false } 
+  -- place this in one of your configuration file(s)
+  vim.api.nvim_set_keymap('n', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
+  vim.api.nvim_set_keymap('n', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
+  vim.api.nvim_set_keymap('o', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
+  vim.api.nvim_set_keymap('o', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
+  vim.api.nvim_set_keymap('', 't', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
+  vim.api.nvim_set_keymap('', 'T', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
+  vim.api.nvim_set_keymap('n', '<leader>e', "<cmd>lua require'hop'.hint_words({ hint_position = require'hop.hint'.HintPosition })<cr>", {})
+  vim.api.nvim_set_keymap('v', '<leader>e', "<cmd>lua require'hop'.hint_words({ hint_position = require'hop.hint'.HintPosition })<cr>", {})
+  vim.api.nvim_set_keymap('o', '<leader>e', "<cmd>lua require'hop'.hint_words({ hint_position = require'hop.hint'.HintPosition, inclusive_jump = true })<cr>", {})
+  vim.api.nvim_set_keymap('n', '<leader>l', "<cmd>lua require'hop'.hint_lines({ hint_position = require'hop.hint'.HintPosition })<cr>", {})
+  vim.api.nvim_set_keymap('v', '<leader>l', "<cmd>lua require'hop'.hint_lines({ hint_position = require'hop.hint'.HintPosition })<cr>", {})
+  vim.api.nvim_set_keymap('o', '<leader>l', "<cmd>lua require'hop'.hint_lines({ hint_position = require'hop.hint'.HintPosition, inclusive_jump = true })<cr>", {})
+  -- require("cmp_luasnip")
+  -- require("luasnip")
+  require("user.snips")
  
 EOF
   " require("lsp")
   " require("telescope.start")
-  " require("snips")
   " <<EOF
-  " for _, ft_path in ipairs(vim.api.nvim_get_runtime_file("lua/snips/ft/*.lua", true)) do
-  "   loadfile(ft_path)()
-  " end

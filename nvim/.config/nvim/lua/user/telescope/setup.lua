@@ -14,6 +14,7 @@ local set_prompt_to_entry_value = function(prompt_bufnr)
 
   action_state.get_current_picker(prompt_bufnr):reset_prompt(entry.ordinal)
 end
+
 -- require("telescope").setup({})
 require("telescope").setup({
   defaults = {
@@ -85,10 +86,11 @@ require("telescope").setup({
         -- This is nicer when used with smart-history plugin.
         ["<C-k>"] = actions.cycle_history_next,
         ["<C-j>"] = actions.cycle_history_prev,
-        ["<c-g>s"] = actions.select_all,
-        ["<c-g>a"] = actions.add_selection,
+        ["<C-g>s"] = actions.select_all,
+        ["<C-g>a"] = actions.add_selection,
+        ["<M-h>"] = R("telescope").extensions.hop.hop,
 
-        ["<c-space>"] = function(prompt_bufnr)
+        ["<C-space>"] = function(prompt_bufnr)
           local opts = {
             callback = actions.toggle_selection,
             loop_callback = actions.send_selected_to_qflist,
@@ -214,10 +216,12 @@ require("telescope").setup({
 -- pcall(require("telescope").load_extension, "arecibo")
 -- require("telescope").load_extension "flutter"
 
+_ = require("telescope").load_extension "hop"
 _ = require("telescope").load_extension "dap"
 _ = require("telescope").load_extension "notify"
 _ = require("telescope").load_extension "file_browser"
--- _ = require("telescope").load_extension "fzf"
+_ = require("telescope").load_extension "ui-select"
+_ = require("telescope").load_extension "fzf"
 _ = require("telescope").load_extension "git_worktree"
 _ = require("telescope").load_extension "neoclip"
 
@@ -229,12 +233,12 @@ pcall(require("telescope").load_extension, "frecency")
 --   pcall(require("telescope").load_extension, "octo")
 -- end
 
--- LOADED_FRECENCY = LOADED_FRECENCY or true
--- local has_frecency = true
--- if not LOADED_FRECENCY then
---   if not pcall(require("telescope").load_extension, "frecency") then
---     require "telescope.frecency"
---   end
+LOADED_FRECENCY = LOADED_FRECENCY or true
+local has_frecency = true
+if not LOADED_FRECENCY then
+  if not pcall(require("telescope").load_extension, "frecency") then
+    require "telescope.frecency"
+  end
 
---   LOADED_FRECENCY = true
--- end
+  LOADED_FRECENCY = true
+end

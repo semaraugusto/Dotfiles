@@ -6,7 +6,7 @@ if not ok then
   return
 end
 
-local nmap = require("keymap").nmap
+local nmap = require("user.keymap").nmap
 
 neogit.setup {
   integrations = {

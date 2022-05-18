@@ -1,4 +1,4 @@
-local override = require "lsp.override"
+local override = require "user.lsp.override"
 
 -- Jump directly to the first available definition every time.
 vim.lsp.handlers["textDocument/definition"] = function(_, result)
@@ -25,7 +25,7 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] =
     virtual_text = true,
   })
 
-vim.lsp.handlers["window/showMessage"] = require "lsp.show_message"
+vim.lsp.handlers["window/showMessage"] = require "user.lsp.show_message"
 
 local M = {}
 

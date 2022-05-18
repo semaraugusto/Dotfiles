@@ -81,7 +81,7 @@ return require("packer").startup {
     -- NOTE: lspconfig ONLY has configs, for people reading this :)
     use "neovim/nvim-lspconfig"
     use "markwoodhall/vim-codelens"
-    -- use "wbthomason/lsp-status.nvim"
+    use "wbthomason/lsp-status.nvim"
     use "j-hui/fidget.nvim"
     use {
       "ericpubu/lsp_codelens_extensions.nvim",
@@ -91,6 +91,18 @@ return require("packer").startup {
     }
     -- use "jose-elias-alvarez/null-ls.nvim"
 
+    -- use "tamago324/lir.nvim"
+    use "nvim-lua/plenary.nvim" 
+
+    -- Optional
+    use {
+      'phaazon/hop.nvim',
+      branch = 'v1', -- optional but strongly recommended
+      -- config = function()
+      --   -- you can configure Hop the way you like here; see :h hop-config
+      --   require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
+      -- end
+    }
     local_use "lsp_extensions.nvim"
     use "onsails/lspkind-nvim"
     -- use "glepnir/lspsaga.nvim"
@@ -265,7 +277,6 @@ return require("packer").startup {
     -- TODO: Eventually statusline should consume this.
     use "mkitt/tabline.vim"
 
-    use "kyazdani42/nvim-web-devicons"
     if is_linux then
       use "yamatsum/nvim-web-nonicons"
     end

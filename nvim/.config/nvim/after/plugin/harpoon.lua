@@ -1,4 +1,4 @@
-local nmap = require("keymap").nmap
+local nmap = require("user.keymap").nmap
 
 local ok, harpoon = pcall(require, "harpoon")
 if not ok then

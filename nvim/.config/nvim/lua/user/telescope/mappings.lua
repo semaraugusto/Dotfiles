@@ -12,7 +12,7 @@ local map_tele = function(key, f, options, buffer)
   TelescopeMapArgs[map_key] = options or {}
 
   local mode = "n"
-  local rhs = string.format("<cmd>lua R('telescope_config')['%s'](TelescopeMapArgs['%s'])<CR>", f, map_key)
+  local rhs = string.format("<cmd>lua R('user.telescope')['%s'](TelescopeMapArgs['%s'])<CR>", f, map_key)
 
   local map_options = {
     noremap = true,
@@ -29,8 +29,8 @@ end
 vim.api.nvim_set_keymap("c", "<c-r><c-r>", "<Plug>(TelescopeFuzzyCommandSearch)", { noremap = false, nowait = true })
 
 -- Dotfiles
--- map_tele("<leader>en", "edit_neovim")
--- map_tele("<leader>ez", "edit_zsh")
+map_tele("<leader>en", "edit_neovim")
+map_tele("<leader>ez", "edit_zsh")
 
 -- Search
 -- TODO: I would like to completely remove _mock from my search results here when I'm in SG/SG

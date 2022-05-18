@@ -1,5 +1,5 @@
-local imap = require("keymap").imap
-local nmap = require("keymap").nmap
+local imap = require("user.keymap").imap
+local nmap = require("user.keymap").nmap
 
 local has_lsp, lspconfig = pcall(require, "lspconfig")
 if not has_lsp then
@@ -13,9 +13,26 @@ if not ok then
   nvim_status = nil
 end
 
-local neoclip = require"neoclip".setup()
--- local telescope_mapper = require "telescope.mappings"
-local handlers = require "lsp.handlers"
+local buf_nnoremap = function(opts)
+  if opts[3] == nil then
+    opts[3] = {}
+  end
+  opts[3].buffer = 0
+
+  nmap(opts)
+end
+
+local buf_inoremap = function(opts)
+  if opts[3] == nil then
+    opts[3] = {}
+  end
+  opts[3].buffer = 0
+
+  imap(opts)
+end
+-- local neoclip = require"neoclip".setup()
+local telescope_mapper = require "user.telescope.mappings"
+local handlers = require "user.lsp.handlers"
 
 local ts_util = require "nvim-lsp-ts-utils"
 
@@ -23,7 +40,7 @@ local ts_util = require "nvim-lsp-ts-utils"
 -- require("vim.lsp.log").set_level "debug"
 -- require("vim.lsp.log").set_level "trace"
 
-local status = require "lsp.status"
+local status = require "user.lsp.status"
 print("STATUS", status)
 if status then
   status.activate()
@@ -45,12 +62,12 @@ local filetype_attach = setmetatable({
   end,
 
   rust = function()
-    -- telescope_mapper("<space>wf", "lsp_workspace_symbols", true)
+    buf_nnoremap{"<space>wf", vim.lsp.buf.workspace_symbol}
 
-    -- vim.cmd [[
-    --   autocmd BufEnter,BufWritePost <buffer> :lua require('lsp_extensions.inlay_hints').request {aligned = true, prefix = " » "}
-    -- ]]
-    require"luasnip".filetype_extend("rust", {"rust-analyzer"})
+    vim.cmd [[
+      autocmd BufEnter,BufWritePost <buffer> :lua require('lsp_extensions.inlay_hints').request {aligned = true, prefix = " » "}
+    ]]
+    -- require"luasnip".filetype_extend("rust", {"rust-analyzer"})
     vim.cmd [[
       augroup lsp_buf_format
         au! BufWritePre <buffer>
@@ -64,23 +81,6 @@ local filetype_attach = setmetatable({
   end,
 })
 
-local buf_nnoremap = function(opts)
-  if opts[3] == nil then
-    opts[3] = {}
-  end
-  opts[3].buffer = 0
-
-  nmap(opts)
-end
-
-local buf_inoremap = function(opts)
-  if opts[3] == nil then
-    opts[3] = {}
-  end
-  opts[3].buffer = 0
-
-  imap(opts)
-end
 
 local custom_attach = function(client)
   local filetype = vim.api.nvim_buf_get_option(0, "filetype")
@@ -99,11 +99,15 @@ local custom_attach = function(client)
   buf_nnoremap { "gT", vim.lsp.buf.type_definition }
 
   buf_nnoremap { "<space>gI", handlers.implementation }
-  buf_nnoremap { "<space>lr", "<cmd>lua R('lsp.codelens').run()<CR>" }
+  buf_nnoremap { "<space>lr", "<cmd>lua R('user.lsp.codelens').run()<CR>" }
   buf_nnoremap { "<space>rr", "LspRestart" }
 
-  buf_nnoremap { "gr", vim.lsp.buf.references }
-  buf_nnoremap { "gI", vim.lsp.buf.implementation }
+  -- buf_nnoremap { "gr", vim.lsp.buf.references }
+  -- buf_nnoremap { "gI", vim.lsp.buf.implementation }
+  telescope_mapper("gr", "lsp_references", nil, true)
+  telescope_mapper("gI", "lsp_implementations", nil, true)
+  -- telescope_mapper("<space>wd", "lsp_document_symbols", { ignore_filename = true }, true)
+  -- telescope_mapper("<space>ww", "lsp_dynamic_workspace_symbols", { ignore_filename = true }, true)
 
   if filetype ~= "lua" then
     buf_nnoremap { "K", vim.lsp.buf.hover, { desc = "lsp:hover" } }
@@ -262,33 +266,33 @@ for server, config in pairs(servers) do
   setup_server(server, config)
 end
 
--- Load lua configuration from nlua.
-_ = require("nlua.lsp.nvim").setup(lspconfig, {
-  on_init = custom_init,
-  on_attach = custom_attach,
-  capabilities = updated_capabilities,
-
-  root_dir = function(fname)
-    if string.find(vim.fn.fnamemodify(fname, ":p"), "xdg_config/nvim/") then
-      return vim.fn.expand "~/.config/nvim/"
-    end
-
-    -- ~/git/config_manager/xdg_config/nvim/...
-    return lspconfig_util.find_git_ancestor(fname) or lspconfig_util.path.dirname(fname)
-  end,
-
-  globals = {
-    -- Colorbuddy
-    "Color",
-    "c",
-    "Group",
-    "g",
-    "s",
-
-    -- Custom
-    "RELOAD",
-  },
-})
+-- -- Load lua configuration from nlua.
+-- _ = require("nlua.lsp.nvim").setup(lspconfig, {
+--   on_init = custom_init,
+--   on_attach = custom_attach,
+--   capabilities = updated_capabilities,
+--
+--   root_dir = function(fname)
+--     if string.find(vim.fn.fnamemodify(fname, ":p"), "~/Dotfiles/nvim/") then
+--       return vim.fn.expand "~/.config/nvim/"
+--     end
+--
+--     -- ~/git/config_manager/xdg_config/nvim/...
+--     return lspconfig_util.find_git_ancestor(fname) or lspconfig_util.path.dirname(fname)
+--   end,
+--
+--   globals = {
+--     -- Colorbuddy
+--     "Color",
+--     "c",
+--     "Group",
+--     "g",
+--     "s",
+--
+--     -- Custom
+--     "RELOAD",
+--   },
+-- })
 
 --[ An example of using functions...
 -- 0. nil -> do default (could be enabled or disabled)

@@ -1,9 +1,10 @@
-if vim.g.snippets ~= "luasnip" or not pcall(require, "luasnip") then
-  return
-end
+-- if vim.g.snippets ~= "luasnip" or not pcall(require, "luasnip") then
+--   return
+-- end
 
-local make = R("snips").make
+local make = R("user.snips.init").make
 
+local cmp_ls = require "cmp_luasnip"
 local ls = require "luasnip"
 local types = require "luasnip.util.types"
 
@@ -264,7 +265,7 @@ ls.add_snippets(
   }
 )
 
-for _, ft_path in ipairs(vim.api.nvim_get_runtime_file("lua/snips/ft/*.lua", true)) do
+for _, ft_path in ipairs(vim.api.nvim_get_runtime_file("lua/user/snips/ft/*.lua", true)) do
   loadfile(ft_path)()
 end
 
@@ -274,7 +275,7 @@ vim.keymap.set({ "i", "s" }, "<c-k>", function()
   if ls.expand_or_jumpable() then
     ls.expand_or_jump()
   end
-end, { silent = true })
+end, { silent = false })
 
 -- <c-j> is my jump backwards key.
 -- this always moves to the previous item within the snippet
@@ -282,7 +283,7 @@ vim.keymap.set({ "i", "s" }, "<c-j>", function()
   if ls.jumpable(-1) then
     ls.jump(-1)
   end
-end, { silent = true })
+end, { silent = false })
 
 -- <c-l> is selecting within a list of options.
 -- This is useful for choice nodes (introduced in the forthcoming episode 2)
@@ -296,3 +297,5 @@ vim.keymap.set("i", "<c-u>", require "luasnip.extras.select_choice")
 
 -- shorcut to source my luasnips file again, which will reload my snippets
 vim.keymap.set("n", "<leader><leader>s", "<cmd>source ~/.config/nvim/after/plugin/luasnip.lua<CR>")
+
+require("luasnip.loaders.from_vscode").lazy_load()
