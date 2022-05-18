@@ -104,11 +104,12 @@ cmp.setup {
 
     -- Youtube: Could enable this only for lua, but nvim_lua handles that already.
     { name = "nvim_lua" },
+    { name = "cmp_tabnine" },
 
     { name = "nvim_lsp" },
     { name = "path" },
     { name = "luasnip" },
-    { name = "buffer", keyword_length = 1 },
+    { name = "buffer", keyword_length = 5 },
   },
 
   sorting = {
@@ -152,12 +153,12 @@ cmp.setup {
       with_text = true,
       menu = {
         buffer = "[buf]",
+        luasnip = "[snip]",
+        cmp_tabnine = "[TabNine]",
         nvim_lsp = "[LSP]",
         nvim_lua = "[api]",
         path = "[path]",
-        luasnip = "[snip]",
-        cmp_tabnine = "[TabNine]",
-        -- gh_issues = "[issues]",
+        gh_issues = "[issues]",
       },
     },
   },
@@ -219,12 +220,12 @@ autocmd FileType lua lua require'cmp'.setup.buffer {
 --]]
 
 -- Add vim-dadbod-completion in sql files
--- _ = vim.cmd [[
---   augroup DadbodSql
---     au!
---     autocmd FileType sql,mysql,plsql lua require('cmp').setup.buffer { sources = { { name = 'vim-dadbod-completion' } } }
---   augroup END
--- ]]
+_ = vim.cmd [[
+  augroup DadbodSql
+    au!
+    autocmd FileType sql,mysql,plsql lua require('cmp').setup.buffer { sources = { { name = 'vim-dadbod-completion' } } }
+  augroup END
+]]
 
 _ = vim.cmd [[
   augroup CmpZsh
@@ -241,12 +242,12 @@ autocmd FileType TelescopePrompt lua require('cmp').setup.buffer { enabled = fal
 -- Youtube: customizing appearance
 --
 -- nvim-cmp highlight groups.
--- local Group = require("colorbuddy.group").Group
--- local g = require("colorbuddy.group").groups
--- local s = require("colorbuddy.style").styles
---
--- Group.new("CmpItemAbbr", g.Comment)
--- Group.new("CmpItemAbbrDeprecated", g.Error)
--- Group.new("CmpItemAbbrMatchFuzzy", g.CmpItemAbbr.fg:dark(), nil, s.italic)
--- Group.new("CmpItemKind", g.Special)
--- Group.new("CmpItemMenu", g.NonText)
+local Group = require("colorbuddy.group").Group
+local g = require("colorbuddy.group").groups
+local s = require("colorbuddy.style").styles
+
+Group.new("CmpItemAbbr", g.Comment)
+Group.new("CmpItemAbbrDeprecated", g.Error)
+Group.new("CmpItemAbbrMatchFuzzy", g.CmpItemAbbr.fg:dark(), nil, s.italic)
+Group.new("CmpItemKind", g.Special)
+Group.new("CmpItemMenu", g.NonText)
