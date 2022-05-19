@@ -1,7 +1,5 @@
 local has_rust_tools, rust_tools = pcall(require, "rust-tools")
 
-require'luasnip'.filetype_extend("rust", {"rails"})
-require'luasnip'.filetype_extend("rust", {"rust-analyzer"})
 -- local _ = require "lsp.extensions"
 if has_rust_tools then
   local lsp = require "user.lsp"

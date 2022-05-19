@@ -64,14 +64,11 @@ local filetype_attach = setmetatable({
   rust = function()
     buf_nnoremap{"<space>wf", vim.lsp.buf.workspace_symbol}
 
-    vim.cmd [[
-      autocmd BufEnter,BufWritePost <buffer> :lua require('lsp_extensions.inlay_hints').request {aligned = true, prefix = " » "}
-    ]]
     -- require"luasnip".filetype_extend("rust", {"rust-analyzer"})
     vim.cmd [[
       augroup lsp_buf_format
         au! BufWritePre <buffer>
-        autocmd BufWritePre <buffer> :lua vim.lsp.buf.formatting_sync()<CR>
+        autocmd BufWritePre <buffer> :lua vim.lsp.buf.formatting_sync()
       augroup END
     ]]
   end,
