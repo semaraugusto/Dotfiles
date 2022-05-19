@@ -2,10 +2,9 @@
 My dotfiles for softwares I usually use. 
 It's made specifically for me, I do not recommend copying without reading.
 Caps Lock is inverted with Esc.
-Window manager is i3 with polybar
-i3 has got spotify integration
+Window manager is xmonad with xmobar
 
-nvim and vim have many plugins. You'd have to make sure that Plug got installed and then run ":PlugInstall" on vim/neovim
+nvim and vim have many plugins. You need Packer to use them.
 
-Take care with the bashrc paths variables and aliases.
-
+Take care with the zshrc paths variables and aliases. I wasn't super careful in making this compatible to new machines
+Dotfiles contain absolute paths to some directories in my computer
