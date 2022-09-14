@@ -142,6 +142,7 @@ return require("packer").startup {
       end,
     }
 
+    use "gpanders/editorconfig.nvim"
     use "rcarriga/nvim-notify"
 
     -- TODO: Investigate
