@@ -1,5 +1,6 @@
 local imap = require("user.keymap").imap
 local nmap = require("user.keymap").nmap
+local vmap = require("user.keymap").vmap
 
 local has_lsp, lspconfig = pcall(require, "lspconfig")
 if not has_lsp then
@@ -11,6 +12,28 @@ local lspconfig_util = require "lspconfig.util"
 local ok, nvim_status = pcall(require, "lsp-status")
 if not ok then
   nvim_status = nil
+end
+
+function dump_server_capabilities(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. dump_server_capabilities(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
+
+local buf_vnoremap = function(opts)
+  if opts[3] == nil then
+    opts[3] = {}
+  end
+  opts[3].buffer = 0
+
+  vmap(opts)
 end
 
 local buf_nnoremap = function(opts)
@@ -56,7 +79,7 @@ local filetype_attach = setmetatable({
     vim.cmd [[
       augroup lsp_buf_format
         au! BufWritePre <buffer>
-        autocmd BufWritePre <buffer> :lua vim.lsp.buf.formatting_sync()
+        autocmd BufWritePre <buffer> :lua vim.lsp.buf.format()
       augroup END
     ]]
   end,
@@ -64,11 +87,12 @@ local filetype_attach = setmetatable({
   rust = function()
     buf_nnoremap{"<space>wf", vim.lsp.buf.workspace_symbol}
 
-    -- require"luasnip".filetype_extend("rust", {"rust-analyzer"})
+    require("luasnip.loaders.from_snipmate").lazy_load({ paths = { "~/.config/nvim/lua/user/snips/snippets/" } })
+    require"luasnip".filetype_extend("rust", {"rust-analyzer"})
     vim.cmd [[
       augroup lsp_buf_format
         au! BufWritePre <buffer>
-        autocmd BufWritePre <buffer> :lua vim.lsp.buf.formatting_sync()
+        autocmd BufWritePre <buffer> :lua vim.lsp.buf.format()
       augroup END
     ]]
   end,
@@ -88,16 +112,28 @@ local custom_attach = function(client)
 
   buf_inoremap { "<c-s>", vim.lsp.buf.signature_help }
 
-  buf_nnoremap { "<space>cr", vim.lsp.buf.rename }
-  buf_nnoremap { "<space>ca", vim.lsp.buf.code_action }
+  buf_nnoremap { "<space>gr", vim.lsp.buf.rename }
+  buf_nnoremap { "<space>ga", vim.lsp.buf.code_action }
 
   buf_nnoremap { "gd", vim.lsp.buf.definition }
   buf_nnoremap { "gD", vim.lsp.buf.declaration }
+  buf_nnoremap { "gi", vim.lsp.buf.implementation }
   buf_nnoremap { "gT", vim.lsp.buf.type_definition }
 
-  buf_nnoremap { "<space>gI", handlers.implementation }
+  buf_nnoremap { "<space>gi", handlers.implementation }
   buf_nnoremap { "<space>lr", "<cmd>lua R('user.lsp.codelens').run()<CR>" }
-  buf_nnoremap { "<space>rr", "LspRestart" }
+  buf_nnoremap { "<space>rr", "<cmd>LspRestart<CR>" }
+
+  buf_nnoremap { "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>" }
+  buf_nnoremap { "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>" }
+
+  buf_nnoremap { "<leader>e", vim.lsp.diagnostic.show_line_diagnostics }
+  if client.server_capabilities.documentFormattingProvider then
+    buf_nnoremap {'<leader>f', '<cmd>lua vim.lsp.buf.format({ async = true })<CR>'}
+  end
+  if client.server_capabilities.documentRangeFormattingProvider then
+    buf_vnoremap {'<leader>f', '<cmd>lua vim.lsp.buf.range_formatting()<CR>'}
+  end
 
   -- buf_nnoremap { "gr", vim.lsp.buf.references }
   -- buf_nnoremap { "gI", vim.lsp.buf.implementation }
@@ -108,6 +144,7 @@ local custom_attach = function(client)
 
   if filetype ~= "lua" then
     buf_nnoremap { "K", vim.lsp.buf.hover, { desc = "lsp:hover" } }
+    -- buf_nnoremap { "K", "<cmd>HoverWithActions<CR>", { desc = "lsp:hover" } }
   end
 
   vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
@@ -141,6 +178,8 @@ end
 
 local updated_capabilities = vim.lsp.protocol.make_client_capabilities()
 if nvim_status then
+  -- vim.notify (dump_server_capabilities(updated_capabilities));
+  -- vim.notify (dump_server_capabilities(nvim_status.capabilities));
   updated_capabilities = vim.tbl_deep_extend("keep", updated_capabilities, nvim_status.capabilities)
 end
 updated_capabilities.textDocument.codeLens = { dynamicRegistration = false }
@@ -158,7 +197,11 @@ local servers = {
   pyright = true,
   vimls = true,
   yamlls = true,
-  eslint = false,
+  eslint = true,
+  hls = true,
+  solang = true,
+  bashls = true,
+  -- jsonls = true,
 
   cmake = (1 == vim.fn.executable "cmake-language-server"),
   dartls = pcall(require, "flutter-tools"),
@@ -232,7 +275,7 @@ local servers = {
     on_attach = function(client)
       custom_attach(client)
 
-      ts_util.setup { auto_inlay_hints = false }
+      ts_util.setup { auto_inlay_hints = true }
       ts_util.setup_client(client)
     end,
   },
@@ -250,7 +293,7 @@ local setup_server = function(server, config)
   config = vim.tbl_deep_extend("force", {
     on_init = custom_init,
     on_attach = custom_attach,
-    capabilities = updated_capabilities,
+    server_capabilities = updated_capabilities,
     flags = {
       debounce_text_changes = nil,
     },
@@ -263,95 +306,28 @@ for server, config in pairs(servers) do
   setup_server(server, config)
 end
 
--- -- Load lua configuration from nlua.
--- _ = require("nlua.lsp.nvim").setup(lspconfig, {
---   on_init = custom_init,
---   on_attach = custom_attach,
---   capabilities = updated_capabilities,
---
---   root_dir = function(fname)
---     if string.find(vim.fn.fnamemodify(fname, ":p"), "~/Dotfiles/nvim/") then
---       return vim.fn.expand "~/.config/nvim/"
---     end
---
---     -- ~/git/config_manager/xdg_config/nvim/...
---     return lspconfig_util.find_git_ancestor(fname) or lspconfig_util.path.dirname(fname)
---   end,
---
---   globals = {
---     -- Colorbuddy
---     "Color",
---     "c",
---     "Group",
---     "g",
---     "s",
---
---     -- Custom
---     "RELOAD",
---   },
--- })
+lspconfig.jedi_language_server.setup {
+  on_init = custom_init,
+  on_attach = custom_attach,
+  server_capabilities = updated_capabilities,
+}
 
---[ An example of using functions...
--- 0. nil -> do default (could be enabled or disabled)
--- 1. false -> disable it
--- 2. true -> enable, use defaults
--- 3. table -> enable, with (some) overrides
--- 4. function -> can return any of above
---
--- vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, method, params, client_id, bufnr, config)
---   local uri = params.uri
---
---   vim.lsp.with(
---     vim.lsp.diagnostic.on_publish_diagnostics, {
---       underline = true,
---       virtual_text = true,
---       signs = sign_decider,
---       update_in_insert = false,
---     }
---   )(err, method, params, client_id, bufnr, config)
---
---   bufnr = bufnr or vim.uri_to_bufnr(uri)
---
---   if bufnr == vim.api.nvim_get_current_buf() then
---     vim.lsp.diagnostic.set_loclist { open_loclist = false }
---   end
--- end
---]]
+local use_null = true
+if use_null then
+  require("null-ls").setup {
+    sources = {
+      -- require("null-ls").builtins.formatting.stylua,
+      -- require("null-ls").builtins.diagnostics.eslint,
+      -- require("null-ls").builtins.completion.spell,
+      -- require("null-ls").builtins.diagnostics.selene,
+      require("null-ls").builtins.formatting.prettierd,
+    },
+  }
+end
 
--- python graveyard
--- lspconfig.pyls.setup {
---   plugins = {
---     pyls_mypy = {
---       enabled = true,
---       live_mode = false
---     }
---   },
---   on_init = custom_init,
---   on_attach = custom_attach,
---   capabilities = updated_capabilities,
--- }
-
--- lspconfig.jedi_language_server.setup {
---   on_init = custom_init,
---   on_attach = custom_attach,
---   capabilities = updated_capabilities,
--- }
-
--- Set up null-ls
--- local use_null = false
--- if use_null then
---   require("null-ls").setup {
---     sources = {
---       require("null-ls").builtins.formatting.stylua,
---       require("null-ls").builtins.diagnostics.eslint,
---       require("null-ls").builtins.completion.spell,
---       require("null-ls").builtins.diagnostics.selene,
---     },
---   }
--- end
 
 return {
   on_init = custom_init,
   on_attach = custom_attach,
-  capabilities = updated_capabilities,
+  server_capabilities = updated_capabilities,
 }

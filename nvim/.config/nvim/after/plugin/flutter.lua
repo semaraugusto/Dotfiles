@@ -32,6 +32,6 @@ require("flutter-tools").setup {
 
   lsp = {
     on_attach = custom_lsp.on_attach,
-    capabilities = custom_lsp.capabilities,
+    server_capabilities = custom_lsp.capabilities,
   },
 }

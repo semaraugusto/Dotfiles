@@ -105,6 +105,7 @@ cmp.setup {
     -- Youtube: Could enable this only for lua, but nvim_lua handles that already.
     { name = "nvim_lua" },
     { name = "cmp_tabnine" },
+    { name = "tn" },
 
     { name = "nvim_lsp" },
     { name = "path" },
@@ -156,6 +157,7 @@ cmp.setup {
         buffer = "[buf]",
         luasnip = "[snip]",
         cmp_tabnine = "[TabNine]",
+        tn = "[tn]",
         nvim_lsp = "[LSP]",
         nvim_lua = "[api]",
         path = "[path]",
@@ -243,12 +245,12 @@ autocmd FileType TelescopePrompt lua require('cmp').setup.buffer { enabled = fal
 -- Youtube: customizing appearance
 --
 -- nvim-cmp highlight groups.
-local Group = require("colorbuddy.group").Group
-local g = require("colorbuddy.group").groups
-local s = require("colorbuddy.style").styles
-
-Group.new("CmpItemAbbr", g.Comment)
-Group.new("CmpItemAbbrDeprecated", g.Error)
-Group.new("CmpItemAbbrMatchFuzzy", g.CmpItemAbbr.fg:dark(), nil, s.italic)
-Group.new("CmpItemKind", g.Special)
-Group.new("CmpItemMenu", g.NonText)
+-- local Group = require("colorbuddy.group").Group
+-- local g = require("colorbuddy.group").groups
+-- local s = require("colorbuddy.style").styles
+--
+-- Group.new("CmpItemAbbr", g.Comment)
+-- Group.new("CmpItemAbbrDeprecated", g.Error)
+-- Group.new("CmpItemAbbrMatchFuzzy", g.CmpItemAbbr.fg:dark(), nil, s.italic)
+-- Group.new("CmpItemKind", g.Special)
+-- Group.new("CmpItemMenu", g.NonText)

@@ -1,6 +1,11 @@
 _ = vim.cmd [[packadd packer.nvim]]
 _ = vim.cmd [[packadd vimball]]
 
+-- vim.api.nvim_cmd({
+--   cmd = "packadd",
+--   args = { "packer.vim" },
+-- }, {})
+
 local has = function(x)
   return vim.fn.has(x) == 1
 end
@@ -17,7 +22,10 @@ end)()
 local is_mac = has "maxunix"
 local is_linx = not is_wsl and not is_mac
 
--- require('packer.luarocks').cfg({ luarocks =
+local max_jobs = nil
+if is_mac then
+  max_jobs = 32
+end
 
 return require("packer").startup {
   function(use)
@@ -51,7 +59,7 @@ return require("packer").startup {
     end
 
     use "wbthomason/packer.nvim"
-    -- use "lewis6991/impatient.nvim"
+    use "lewis6991/impatient.nvim"
     -- use "camspiers/snap"
 
     -- My Plugins
@@ -80,8 +88,9 @@ return require("packer").startup {
 
     -- NOTE: lspconfig ONLY has configs, for people reading this :)
     use "neovim/nvim-lspconfig"
+    use "neovim/nvim-lsp"
     use "markwoodhall/vim-codelens"
-    use "wbthomason/lsp-status.nvim"
+    -- use "wbthomason/lsp-status.nvim"
     use "j-hui/fidget.nvim"
     use {
       "ericpubu/lsp_codelens_extensions.nvim",
@@ -89,10 +98,11 @@ return require("packer").startup {
         require("codelens_extensions").setup()
       end,
     }
-    -- use "jose-elias-alvarez/null-ls.nvim"
+    use "jose-elias-alvarez/null-ls.nvim"
 
     -- use "tamago324/lir.nvim"
     use "nvim-lua/plenary.nvim" 
+    use "f-person/git-blame.nvim"
 
     -- Optional
     use {
@@ -138,7 +148,6 @@ return require("packer").startup {
     -- use 'jose-elias-alvarez/nvim-lsp-ts-utils'
 
     local_use("nvim-lua", "popup.nvim")
-    local_use("nvim-lua", "plenary.nvim")
 
     local_use("nvim-telescope", "telescope.nvim")
     local_use("nvim-telescope", "telescope-rs.nvim")
@@ -175,6 +184,15 @@ return require("packer").startup {
     use "nvim-telescope/telescope-frecency.nvim"
     use "nvim-telescope/telescope-cheat.nvim"
     use { "nvim-telescope/telescope-arecibo.nvim", rocks = { "openssl", "lua-http-parser" } }
+
+    if executable "jq" then
+      use {
+        "NTBBloodbath/rest.nvim",
+        config = function()
+          require("rest-nvim").setup()
+        end,
+      }
+    end
 
     use {
       "antoinemadec/FixCursorHold.nvim",
@@ -280,6 +298,7 @@ return require("packer").startup {
     if is_linux then
       use "yamatsum/nvim-web-nonicons"
     end
+    use "kyazdani42/nvim-web-devicons" 
 
     -- TODO: This would be cool to add back, but it breaks sg.nvim for now.
     -- use "lambdalisue/vim-protocol"
@@ -316,7 +335,9 @@ return require("packer").startup {
     --
     --  LANGUAGE:
     -- TODO: Should check on these if they are the best ones
+    use { "tomlion/vim-solidity", ft = "solidity" }
     use { "neovimhaskell/haskell-vim", ft = "haskell" }
+    use { "alx741/vim-hindent", ft = "haskell" }
     use { "elzr/vim-json", ft = "json" }
     use { "goodell/vim-mscgen", ft = "mscgen" }
     use "PProvost/vim-ps1"
@@ -332,18 +353,18 @@ return require("packer").startup {
     use { "iamcco/markdown-preview.nvim", ft = "markdown", run = "cd app && yarn install" }
 
     -- Typescript
-    if false then
-      use "jelera/vim-javascript-syntax"
-      use "othree/javascript-libraries-syntax.vim"
-      use "leafgarland/typescript-vim"
-      use "peitalin/vim-jsx-typescript"
+    -- if false then
+    use "jelera/vim-javascript-syntax"
+    use "othree/javascript-libraries-syntax.vim"
+    use "leafgarland/typescript-vim"
+    use "peitalin/vim-jsx-typescript"
 
-      use { "vim-scripts/JavaScript-Indent", ft = "javascript" }
-      use { "pangloss/vim-javascript", ft = { "javascript", "html" } }
+    use { "vim-scripts/JavaScript-Indent", ft = "javascript" }
+    use { "pangloss/vim-javascript", ft = { "javascript", "html" } }
 
-      -- Godot
-      use "habamax/vim-godot"
-    end
+    -- Godot
+    use "habamax/vim-godot"
+    -- end
 
     -- Wonder if I can make LSP do this and respect .prettier files.
     --  I don't write enough typescript to think about this.
@@ -359,7 +380,7 @@ return require("packer").startup {
     use "tpope/vim-liquid"
 
     -- Sql
-    -- use { "tami5/sqlite.lua" }
+    use { "tami5/sqlite.lua" }
     use "tpope/vim-dadbod"
     use { "kristijanhusak/vim-dadbod-completion" }
     use { "kristijanhusak/vim-dadbod-ui" }
@@ -381,10 +402,12 @@ return require("packer").startup {
     use "hrsh7th/cmp-nvim-lua"
     use "hrsh7th/cmp-nvim-lsp"
     use "hrsh7th/cmp-nvim-lsp-document-symbol"
-    use { "tzachar/cmp-tabnine", run = "./install.sh" }
+    -- use { "tzachar/cmp-tabnine", run = "./install.sh" }
+ 	use {'tzachar/cmp-tabnine', run='./install.sh', requires = 'hrsh7th/nvim-cmp'}
     -- use "tzachar/cmp-tabnine", { 'do': './install.sh' }
     use "simrat39/rust-tools.nvim"
     use "rust-lang/rust.vim"
+    -- use "sohkai/syntastic-local-solhint"
     use "mhinz/vim-crates"
     use "iden3/vim-circom-syntax"
     use "saadparwaiz1/cmp_luasnip"
@@ -421,6 +444,7 @@ return require("packer").startup {
     use "rcarriga/nvim-dap-ui"
     use "theHamsta/nvim-dap-virtual-text"
     use "nvim-telescope/telescope-dap.nvim"
+    use "Pocco81/dap-buddy.nvim"
 
     use "mfussenegger/nvim-dap-python"
     use "jbyuki/one-small-step-for-vimkind"
@@ -437,6 +461,13 @@ return require("packer").startup {
     --   end,
     -- }
 
+    use {
+      'kyazdani42/nvim-tree.lua',
+      requires = {
+        'kyazdani42/nvim-web-devicons', -- optional, for file icons
+      },
+      tag = 'nightly' -- optional, updated every week. (see issue #1193)
+    }
     -- TREE SITTER:
     local_use("nvim-treesitter", "nvim-treesitter")
     use "nvim-treesitter/playground"
@@ -469,7 +500,7 @@ return require("packer").startup {
 
     -- Grammars
     -- local_use "tree-sitter-lua"
-    use { "m-novikov/tree-sitter-sql" }
+    -- use { "m-novikov/tree-sitter-sql" }
     -- local_use "tree-sitter-sql"
     -- use { "DerekStride/tree-sitter-sql" }
     use "Azganoth/tree-sitter-lua"
@@ -509,6 +540,8 @@ return require("packer").startup {
     use "tpope/vim-abolish" -- Cool things with words!
     use "tpope/vim-characterize"
     use { "tpope/vim-dispatch", cmd = { "Dispatch", "Make" } }
+    use "flazz/vim-colorschemes"
+    use { "catppuccin/nvim", as = "catppuccin" }
 
     use "numToStr/Comment.nvim"
 

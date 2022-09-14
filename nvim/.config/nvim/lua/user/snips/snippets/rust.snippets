@@ -1,0 +1,127 @@
+snippet cmt "Comment"
+	// -----------------------------------------------------------------------------
+	//     - $1-
+	// -----------------------------------------------------------------------------$0
+
+snippet struct "Create a struct"
+	struct $1 {
+		$2
+	}
+
+	impl $1 {
+		fn new() -> Self {
+			$3
+			Self {
+				$4
+			}
+		}
+	}
+
+
+snippet modtest 
+	#[cfg(test)]
+	mod test {
+		use super::*;
+		$0
+	}
+
+snippet test
+	#[test]
+	fn $1() {
+		$0
+		assert_eq!(expected, actual);
+	}
+
+snippet impfor
+	impl $1 for $2 {
+		fn $4($5) -> $6 {
+			$0
+		}
+	}
+
+snippet impit
+	impl Iterator for $1 {
+		type Item = $0;
+
+		fn next(&mut self) -> Option<Self::Item> {
+			None
+		}
+	}
+
+snippet default "debug macro"
+	impl Default for ${0:${VISUAL}} {
+		fn default() {
+			Self {
+			}
+		}
+	}
+
+
+snippet tokiomain "main function"
+	#[tokio::main]
+	async fn main() {
+	${0:${VISUAL}}
+	}
+
+
+snippet main "main function"
+	fn main() {
+	${0:${VISUAL}}
+	}
+
+
+snippet new "new function"
+	pub fn new($1) -> Self {
+		Self {
+			${0:${VISUAL}}
+		}
+	}
+
+
+snippet benchbase
+	#![feature(test)]
+	extern crate test;
+	use test::bench::{Bencher, black_box};
+
+	#[bench]
+	fn $1(b: &mut Bencher) {
+		b.iter(|| {
+		});
+	}
+
+snippet bench
+	#[bench]
+	fn $1(b: &mut Bencher) {
+		b.iter(|| {
+		});
+	}
+
+snippet address "address boilerplate"
+	#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+	pub enum Address {
+		$0
+	}
+
+	impl ToAddress for Address {
+		fn from_bytes(bytes: &[u8]) -> Option<Address> {
+			match bytes {
+				_ => None
+			}
+		}
+
+		fn to_string(&self) -> String {
+			format!("{:?}", self)
+		}
+	}
+
+snippet pl "eprinln"
+	eprintln!("$1");
+	$0
+
+snippet pr "prinln"
+	println!("$1: {:?}", $1);
+	$0
+
+snippet prv "prinln"
+	println!("$1: {}", $1);
+	$0

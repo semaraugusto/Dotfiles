@@ -9,19 +9,27 @@ end
 
 local list = require("nvim-treesitter.parsers").get_parser_configs()
 
-list.sql = {
-  install_info = {
-    url = "https://github.com/DerekStride/tree-sitter-sql",
-    files = { "src/parser.c" },
-    branch = "main",
-  },
-}
+-- list.sql = {
+--   install_info = {
+--     url = "https://github.com/DerekStride/tree-sitter-sql",
+--     files = { "src/parser.c" },
+--     branch = "main",
+--   },
+-- }
+--
+-- list.rsx = {
+--   install_info = {
+--     url = "https://github.com/tjdevries/tree-sitter-rsx",
+--     files = { "src/parser.c", "src/scanner.cc" },
+--     branch = "master",
+--   },
+-- }
 
 -- list.lua = nil
 
 -- :h nvim-treesitter-query-extensions
 local custom_captures = {
-  ["function.call"] = "LuaFunctionCall",
+  ["function.call.lua"] = "LuaFunctionCall",
   ["function.bracket"] = "Type",
   ["namespace.type"] = "TSNamespaceType",
 }
@@ -58,6 +66,7 @@ local _ = require("nvim-treesitter.configs").setup {
     "go",
     "html",
     "javascript",
+    "json",
     "markdown",
     "python",
     "query",
@@ -70,7 +79,7 @@ local _ = require("nvim-treesitter.configs").setup {
   highlight = {
     enable = true,
     use_languagetree = false,
-    disable = { "json" },
+    -- disable = { "json" },
     custom_captures = custom_captures,
   },
 
@@ -196,7 +205,7 @@ end
 -- vim.treesitter.set_query("rust", "highlights", read_query "~/.config/nvim/queries/rust/highlights.scm")
 -- vim.treesitter.set_query("sql", "highlights", read_query "~/.config/nvim/queries/sql/highlights.scm")
 
-vim.cmd [[highlight IncludedC guibg=#373b41]]
+-- vim.cmd [[highlight IncludedC guibg=#373b41]]
 
 vim.cmd [[nnoremap <space>tp :TSPlaygroundToggle<CR>]]
 vim.cmd [[nnoremap <space>th :TSHighlightCapturesUnderCursor<CR>]]

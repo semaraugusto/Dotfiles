@@ -9,6 +9,9 @@ set wildignore+=**/coverage/*
 " set wildignore+=**/node_modules/*
 set wildignore+=**/.git/*
 
+autocmd BufRead * autocmd FileType <buffer> ++once
+  \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") | exe 'normal! g`"' | endif
+
 let mapleader=','
 " status line
 lua require("user.plugins")
@@ -33,11 +36,13 @@ nmap <C-l> <C-w>l
 
 imap <leader>gau auto,e
 " Copy remaps
+
 nnoremap <leader>y "+y
 vnoremap <leader>y "+y
-vnoremap <leader>p "+p
-nnoremap <leader>p "+p
-nnoremap <leader>Y gg"+yG
+" vnoremap <leader>p "+p
+" nnoremap <leader>p "+p
+nnoremap <leader>p "_dP
+vnoremap <leader>p "_dP
 " nnoremap <leader><leader>s <cmd>source ~/.config/nvim/lua/user/luasnip.lua<CR>
 
 " Delete remaps
@@ -59,7 +64,7 @@ syntax on
 set autoread                          " Auto reload changed files
 set wildmenu                          " Tab autocomplete in command mode
 set backspace=indent,eol,start        " http://vi.stackexchange.com/a/2163
-set laststatus=2                      " Show status line on startup
+set laststatus=3                      " Show status line on startup
 set splitright                        " Open new splits to the right
 set splitbelow                        " Open new splits to the bottom
 "set lazyredraw                        " Reduce the redraw frequency
@@ -69,6 +74,7 @@ set noerrorbells novisualbell         " Turn off visual and audible bells
 set expandtab shiftwidth=4 tabstop=4  " Four spaces for tabs everywhere
 set smarttab
 set history=1000
+set scrolloff=8
 set hlsearch                          " Highlight search results
 set ignorecase smartcase              " Search queries intelligently set case
 set incsearch                         " Show search results as you type
@@ -88,6 +94,9 @@ set mouse=a
 let g:rustfmt_autosave = 1
 let g:snippets = "luasnip"
 
+nnoremap <C-t> :NvimTreeToggle .<CR>
+
+
 nnoremap <silent> <C-S-Up>      :m .-2<CR>==
 nnoremap <silent> <C-S-Down>    :m .+1<CR>==
 inoremap <silent> <C-S-Up>      <Esc>:m .-2<CR>==gi
@@ -95,12 +104,27 @@ inoremap <silent> <C-S-Down>    <Esc>:m .+1<CR>==gi
 vnoremap <silent> <C-S-Up>      :m '>-2<CR>gv=gv
 vnoremap <silent> <C-S-Down>    :m '<+1<CR>gv=gv
 
-" colorscheme gruvbox
-" set termguicolors
-" set background=dark
 
 
 lua <<EOF
+  -- OR setup with some options
+  require("nvim-tree").setup({
+    sort_by = "case_sensitive",
+    view = {
+      adaptive_size = true,
+      mappings = {
+        list = {
+          { key = "u", action = "dir_up" },
+        },
+      },
+    },
+    renderer = {
+      group_empty = true,
+    },
+    filters = {
+      dotfiles = true,
+    },
+  })
   local opt = vim.opt
   opt.formatoptions = opt.formatoptions
     - "a" -- Auto formatting is BAD.
@@ -131,18 +155,16 @@ lua <<EOF
   require("user.telescope.setup")
   require("user.telescope.mappings")
   require("user.luasnip")
+  require("user.dap")
 
   require("hop").setup { keys = 'asdfghjkl;', jump_on_sole_occurrence = false } 
   -- place this in one of your configuration file(s)
   vim.api.nvim_set_keymap('n', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
   vim.api.nvim_set_keymap('n', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
-  vim.api.nvim_set_keymap('o', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
-  vim.api.nvim_set_keymap('o', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
-  vim.api.nvim_set_keymap('', 't', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
-  vim.api.nvim_set_keymap('', 'T', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
-  vim.api.nvim_set_keymap('n', '<leader>e', "<cmd>lua require'hop'.hint_words({ hint_position = require'hop.hint'.HintPosition })<cr>", {})
-  vim.api.nvim_set_keymap('v', '<leader>e', "<cmd>lua require'hop'.hint_words({ hint_position = require'hop.hint'.HintPosition })<cr>", {})
-  vim.api.nvim_set_keymap('o', '<leader>e', "<cmd>lua require'hop'.hint_words({ hint_position = require'hop.hint'.HintPosition, inclusive_jump = true })<cr>", {})
+  vim.api.nvim_set_keymap('o', '<leader>f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
+  vim.api.nvim_set_keymap('o', '<leader>F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
+  vim.api.nvim_set_keymap('', '<leader>t', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
+  vim.api.nvim_set_keymap('', '<leader>T', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
   vim.api.nvim_set_keymap('n', '<leader>l', "<cmd>lua require'hop'.hint_lines({ hint_position = require'hop.hint'.HintPosition })<cr>", {})
   vim.api.nvim_set_keymap('v', '<leader>l', "<cmd>lua require'hop'.hint_lines({ hint_position = require'hop.hint'.HintPosition })<cr>", {})
   vim.api.nvim_set_keymap('o', '<leader>l', "<cmd>lua require'hop'.hint_lines({ hint_position = require'hop.hint'.HintPosition, inclusive_jump = true })<cr>", {})
@@ -151,6 +173,12 @@ lua <<EOF
   require("user.snips")
  
 EOF
+
+" let g:catppuccin_flavour = "frappe" " latte, frappe, macchiato, mocha
+" colorscheme catppuccin
+colorscheme gruvbox
+set termguicolors
+" set background=dark
   " require("lsp")
   " require("telescope.start")
   " <<EOF

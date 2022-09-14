@@ -42,7 +42,7 @@ require("nvim-dap-virtual-text").setup {
 
 -- TODO: How does terminal work?
 dap.defaults.fallback.external_terminal = {
-  command = "/usr/bin/kitty",
+  command = "/usr/bin/alacritty",
   args = { "-e" },
 }
 
@@ -86,7 +86,7 @@ dap.configurations.c = {
     name = "Launch binary nvim",
     type = "c",
     request = "launch",
-    program = "./build/bin/nvim",
+    program = "~/build/bin/nvim",
     args = {
       "--headless",
       "-c",
@@ -103,7 +103,7 @@ dap.configurations.c = {
     name = "Deprecated",
     type = "c",
     request = "attach",
-    program = "./build/bin/nvim",
+    program = "~/build/bin/nvim",
     cwd = vim.fn.expand "~/build/neovim/",
     -- environment = nil,
     externalConsole = false,
@@ -353,7 +353,7 @@ local dap_python = require "dap-python"
 dap_python.setup("python", {
   -- So if configured correctly, this will open up new terminal.
   --    Could probably get this to target a particular terminal
-  --    and/or add a tab to kitty or something like that as well.
+  --    and/or add a tab to alacritty or something like that as well.
   console = "externalTerminal",
 
   include_configs = true,
@@ -465,7 +465,7 @@ dap.configurations.rust = {
     name = "Launch rust-analyzer lsif",
     type = "lldb",
     request = "launch",
-    program = "/home/semar/.cargo/bin/rust-analyzer",
+    program = "/home/semar/.local/bin/rust-analyzer",
     args = { "lsif" },
     -- cwd = "/home/tjdevries/sourcegraph/rust-analyzer.git/monikers-1/",
     stopOnEntry = false,
@@ -481,7 +481,7 @@ local map = function(lhs, rhs, desc)
   vim.keymap.set("n", lhs, rhs, { silent = true, desc = desc })
 end
 
-map("<leader><F5>", function()
+map("<leader>ds", function()
   if vim.bo.filetype ~= "rust" then
     vim.notify "This wasn't rust. I don't know what to do"
     return
@@ -490,19 +490,19 @@ map("<leader><F5>", function()
   R("dap").select_rust_runnable()
 end)
 
-map("<leader>rp", require("dap").step_back, "step_back")
-map("<leader>ri", require("dap").step_into, "step_into")
-map("<leader>ro", require("dap").step_over, "step_over")
-map("<leader>ru", require("dap").step_out, "step_out")
-map("<leader>rn", require("dap").continue, "continue")
+map("<leader>db", require("dap").step_back, "step_back")
+map("<leader>d1", require("dap").step_into, "step_into")
+map("<leader>d2", require("dap").step_over, "step_over")
+map("<leader>d3", require("dap").step_out, "step_out")
+map("<leader>dc", require("dap").continue, "continue")
 
 -- TODO:
 -- disconnect vs. terminate
 
 map("<leader>dr", require("dap").repl.open)
 
-map("<leader>db", require("dap").toggle_breakpoint)
-map("<leader>dB", function()
+map("<leader>b", require("dap").toggle_breakpoint)
+map("<leader>B", function()
   require("dap").set_breakpoint(vim.fn.input "[DAP] Condition > ")
 end)
 
@@ -524,7 +524,7 @@ local dap_ui = require "dapui"
 
 local _ = dap_ui.setup {
   -- You can change the order of elements in the sidebar
-  sidebar = {
+  layouts = {
     elements = {
       -- Provide as ID strings or tables with "id" and "size" keys
       {
@@ -536,8 +536,7 @@ local _ = dap_ui.setup {
     size = 50,
     position = "left", -- Can be "left" or "right"
   },
-
-  tray = {
+  {
     elements = {},
     size = 15,
     position = "bottom", -- Can be "bottom" or "top"

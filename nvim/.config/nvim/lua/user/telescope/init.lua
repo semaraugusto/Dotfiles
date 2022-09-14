@@ -19,23 +19,6 @@ local reloader = function()
   end
 end
 
-pcall(require("telescope").load_extension, "dap")
-pcall(require("telescope").load_extension, "notify")
-pcall(require("telescope").load_extension, "file_browser")
-pcall(require("telescope").load_extension, "fzf")
-pcall(require("telescope").load_extension, "ui-select")
-pcall(require("telescope").load_extension, "git_worktree")
-pcall(require("telescope").load_extension, "neoclip")
--- _ = require("telescope").load_extension "notify"
--- _ = require("telescope").load_extension "file_browser"
--- _ = require("telescope").load_extension "ui-select"
--- _ = require("telescope").load_extension "fzf"
--- _ = require("telescope").load_extension "git_worktree"
--- _ = require("telescope").load_extension "neoclip"
-
-pcall(require("telescope").load_extension, "smart_history")
-pcall(require("telescope").load_extension, "frecency")
-
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local themes = require "telescope.themes"
@@ -197,13 +180,13 @@ function M.edit_zsh()
   }
 end
 
-function M.fd()
+function M.find_files()
   -- local opts = themes.get_ivy {
   --   hidden = false,
   --   sorting_strategy = "ascending",
   --   layout_config = { height = 9 },
   -- }
-  require("telescope.builtin").fd {
+  require("telescope.builtin").find_files {
     sorting_strategy = "descending",
     scroll_strategy = "cycle",
     layout_config = {
@@ -214,7 +197,7 @@ end
 
 function M.fs()
   local opts = themes.get_ivy { hidden = false, sorting_strategy = "descending" }
-  require("telescope.builtin").fd(opts)
+  require("telescope.builtin").find_files(opts)
 end
 
 function M.builtin()
@@ -477,7 +460,7 @@ return setmetatable({}, {
   __index = function(_, k)
     reloader()
 
-    local has_custom, custom = pcall(require, string.format("user.telescope.custom.%s", k))
+    local has_custom, custom = pcall(require, string.format("tj.telescope.custom.%s", k))
 
     if M[k] then
       return M[k]

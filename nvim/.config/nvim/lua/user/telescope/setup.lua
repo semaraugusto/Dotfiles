@@ -15,8 +15,7 @@ local set_prompt_to_entry_value = function(prompt_bufnr)
   action_state.get_current_picker(prompt_bufnr):reset_prompt(entry.ordinal)
 end
 
--- require("telescope").setup({})
-require("telescope").setup({
+require("telescope").setup {
   defaults = {
     prompt_prefix = "> ",
     selection_caret = "> ",
@@ -60,14 +59,13 @@ require("telescope").setup({
     selection_strategy = "reset",
     sorting_strategy = "descending",
     scroll_strategy = "cycle",
-    -- color_devicons = true,
+    color_devicons = true,
 
     mappings = {
       i = {
         ["<C-x>"] = false,
         ["<C-s>"] = actions.select_horizontal,
         ["<C-n>"] = "move_selection_next",
-        ["<esc>"] = actions.close,
 
         ["<C-e>"] = actions.results_scrolling_down,
         ["<C-y>"] = actions.results_scrolling_up,
@@ -86,17 +84,16 @@ require("telescope").setup({
         -- This is nicer when used with smart-history plugin.
         ["<C-k>"] = actions.cycle_history_next,
         ["<C-j>"] = actions.cycle_history_prev,
-        ["<C-g>s"] = actions.select_all,
-        ["<C-g>a"] = actions.add_selection,
-        ["<M-h>"] = R("telescope").extensions.hop.hop,
+        ["<c-g>s"] = actions.select_all,
+        ["<c-g>a"] = actions.add_selection,
 
-        ["<C-space>"] = function(prompt_bufnr)
-          local opts = {
-            callback = actions.toggle_selection,
-            loop_callback = actions.send_selected_to_qflist,
-          }
-          require("telescope").extensions.hop._hop_loop(prompt_bufnr, opts)
-        end,
+        -- ["<c-space>"] = function(prompt_bufnr)
+        --   local opts = {
+        --     callback = actions.toggle_selection,
+        --     loop_callback = actions.send_selected_to_qflist,
+        --   }
+        --   require("telescope").extensions.hop._hop_loop(prompt_bufnr, opts)
+        -- end,
 
         ["<C-w>"] = function()
           vim.api.nvim_input "<c-s-w>"
@@ -112,17 +109,21 @@ require("telescope").setup({
     -- borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
     -- file_ignore_patterns = nil,
 
-    -- file_previewer = require("telescope.previewers").vim_buffer_cat.new,
-    -- grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
-    -- qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
+    file_previewer = require("telescope.previewers").vim_buffer_cat.new,
+    grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
+    qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
 
     history = {
-      path = "~/.local/share/nvim/databases/telescope_history",
+      path = "~/.local/share/nvim/databases/telescope_history.sqlite3",
       limit = 100,
     },
   },
+
   pickers = {
-    fd = {
+    find_files = {
+      -- I don't like having the cwd prefix in my files
+      find_command = { "fdfind", "--strip-cwd-prefix", "--type", "f" },
+
       mappings = {
         n = {
           ["kj"] = "close",
@@ -138,6 +139,7 @@ require("telescope").setup({
       },
     },
   },
+
   extensions = {
     fzy_native = {
       override_generic_sorter = true,
@@ -148,6 +150,7 @@ require("telescope").setup({
       use_highlighter = false,
       minimum_grep_characters = 6,
     },
+
     hop = {
       -- keys define your hop keys in order; defaults to roughly lower- and uppercased home row
       keys = { "a", "s", "d", "f", "g", "h", "j", "k", "l", ";" }, -- ... and more
@@ -168,55 +171,26 @@ require("telescope").setup({
       -- jump to entry where hoop loop was started from
       reset_selection = true,
     },
+
     ["ui-select"] = {
       require("telescope.themes").get_dropdown {
         -- even more opts
       },
     },
+
+    -- frecency = {
+    --   workspaces = {
+    --     ["conf"] = "/home/tj/.config/nvim/",
+    --     ["nvim"] = "/home/tj/build/neovim",
+    --   },
+    -- },
   },
-  textobjects = {
-		select = {
-			enable = true,
+}
 
-			-- Automatically jump forward to textobj, similar to targets.vim
-			lookahead = true,
-
-			keymaps = {
-				-- You can use the capture groups defined in textobjects.scm
-				["af"] = "@function.outer",
-				["if"] = "@function.inner",
-				["ac"] = "@class.outer",
-				["ic"] = "@class.inner",
-			},
-		},
-
-		swap = {
-			enable = true,
-			swap_next = {
-				["<leader>a"] = "@parameter.inner",
-			},
-			swap_previous = {
-				["<leader>A"] = "@parameter.inner",
-			},
-		}
-      }
-})
---
---
---
---     -- frecency = {
---     --   workspaces = {
---     --     ["conf"] = "/home/semar/.config/nvim/",
---     --     ["nvim"] = "/home/semar/build/neovim",
---     --   },
---     -- },
---   -- }
--- })
 -- pcall(require("telescope").load_extension, "cheat")
 -- pcall(require("telescope").load_extension, "arecibo")
 -- require("telescope").load_extension "flutter"
 
-_ = require("telescope").load_extension "hop"
 _ = require("telescope").load_extension "dap"
 _ = require("telescope").load_extension "notify"
 _ = require("telescope").load_extension "file_browser"
@@ -227,18 +201,18 @@ _ = require("telescope").load_extension "neoclip"
 
 pcall(require("telescope").load_extension, "smart_history")
 pcall(require("telescope").load_extension, "frecency")
---
--- if vim.fn.executable "gh" == 1 then
---   pcall(require("telescope").load_extension, "gh")
---   pcall(require("telescope").load_extension, "octo")
--- end
 
-LOADED_FRECENCY = LOADED_FRECENCY or true
-local has_frecency = true
-if not LOADED_FRECENCY then
-  if not pcall(require("telescope").load_extension, "frecency") then
-    require "telescope.frecency"
-  end
-
-  LOADED_FRECENCY = true
+if vim.fn.executable "gh" == 1 then
+  pcall(require("telescope").load_extension, "gh")
+  pcall(require("telescope").load_extension, "octo")
 end
+
+-- LOADED_FRECENCY = LOADED_FRECENCY or true
+-- local has_frecency = true
+-- if not LOADED_FRECENCY then
+--   if not pcall(require("telescope").load_extension, "frecency") then
+--     require "tj.telescope.frecency"
+--   end
+
+--   LOADED_FRECENCY = true
+-- end
