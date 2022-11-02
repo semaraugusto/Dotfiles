@@ -81,6 +81,9 @@ set incsearch                         " Show search results as you type
 set timeoutlen=1000 ttimeoutlen=0     " Remove timeout when hitting escape
 set showcmd                           " Show size of visual selection
 
+set foldmethod=syntax
+set foldlevel=9
+
 " Persistent undo
 set undodir=~/.vim/undo/
 set undofile
@@ -104,7 +107,23 @@ inoremap <silent> <C-S-Down>    <Esc>:m .+1<CR>==gi
 vnoremap <silent> <C-S-Up>      :m '>-2<CR>gv=gv
 vnoremap <silent> <C-S-Down>    :m '<+1<CR>gv=gv
 
+set termguicolors
 
+let g:vimtex_view_method = 'zathura'
+
+" Or with a generic interface:
+let g:vimtex_view_general_viewer = 'okular'
+let g:vimtex_view_general_options = '--unique file:@pdf\#src:@line@tex'
+" VimTeX uses latexmk as the default compiler backend. If you use it, which is
+" strongly recommended, you probably don't need to configure anything. If you
+" want another compiler backend, you can change it as follows. The list of
+" supported backends and further explanation is provided in the documentation,
+" see ":help vimtex-compiler".
+let g:vimtex_compiler_method = 'latexrun'
+
+" Most VimTeX mappings rely on localleader and this can be changed with the
+" following line. The default is usually fine and is the symbol "\".
+let maplocalleader = ","
 
 lua <<EOF
   -- OR setup with some options
@@ -156,29 +175,22 @@ lua <<EOF
   require("user.telescope.mappings")
   require("user.luasnip")
   require("user.dap")
+  require("user.color")
 
-  require("hop").setup { keys = 'asdfghjkl;', jump_on_sole_occurrence = false } 
-  -- place this in one of your configuration file(s)
-  vim.api.nvim_set_keymap('n', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
-  vim.api.nvim_set_keymap('n', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
-  vim.api.nvim_set_keymap('o', '<leader>f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
-  vim.api.nvim_set_keymap('o', '<leader>F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
-  vim.api.nvim_set_keymap('', '<leader>t', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
-  vim.api.nvim_set_keymap('', '<leader>T', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
-  vim.api.nvim_set_keymap('n', '<leader>l', "<cmd>lua require'hop'.hint_lines({ hint_position = require'hop.hint'.HintPosition })<cr>", {})
-  vim.api.nvim_set_keymap('v', '<leader>l', "<cmd>lua require'hop'.hint_lines({ hint_position = require'hop.hint'.HintPosition })<cr>", {})
-  vim.api.nvim_set_keymap('o', '<leader>l', "<cmd>lua require'hop'.hint_lines({ hint_position = require'hop.hint'.HintPosition, inclusive_jump = true })<cr>", {})
+  -- require("hop").setup { keys = 'asdfghjkl;', jump_on_sole_occurrence = false } 
+  -- -- place this in one of your configuration file(s)
+  -- vim.api.nvim_set_keymap('n', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
+  -- vim.api.nvim_set_keymap('n', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
+  -- vim.api.nvim_set_keymap('o', '<leader>f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
+  -- vim.api.nvim_set_keymap('o', '<leader>F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
+  -- vim.api.nvim_set_keymap('', '<leader>t', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
+  -- vim.api.nvim_set_keymap('', '<leader>T', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
+  -- vim.api.nvim_set_keymap('n', '<leader>l', "<cmd>lua require'hop'.hint_lines({ hint_position = require'hop.hint'.HintPosition })<cr>", {})
+  -- vim.api.nvim_set_keymap('v', '<leader>l', "<cmd>lua require'hop'.hint_lines({ hint_position = require'hop.hint'.HintPosition })<cr>", {})
+  -- vim.api.nvim_set_keymap('o', '<leader>l', "<cmd>lua require'hop'.hint_lines({ hint_position = require'hop.hint'.HintPosition, inclusive_jump = true })<cr>", {})
   -- require("cmp_luasnip")
   -- require("luasnip")
   require("user.snips")
  
 EOF
 
-" let g:catppuccin_flavour = "frappe" " latte, frappe, macchiato, mocha
-" colorscheme catppuccin
-colorscheme gruvbox
-set termguicolors
-" set background=dark
-  " require("lsp")
-  " require("telescope.start")
-  " <<EOF

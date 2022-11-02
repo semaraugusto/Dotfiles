@@ -25,16 +25,77 @@ end
 
 lspkind.init()
 
+-- require('copilot').setup({
+--   panel = {
+--     enabled = true,
+--     auto_refresh = false,
+--     keymap = {
+--       jump_prev = "<C-n>",
+--       jump_next = "<C-p>",
+--       accept = "<C-y>",
+--       refresh = "gr",
+--       open = "<leader>go"
+--     },
+--   },
+--   preview = {
+--     enabled = true,
+--     keymap = {
+--       jump_prev = "[[",
+--       jump_next = "]]",
+--       accept = "<CR>",
+--       refresh = "gr",
+--       open = "<leader>go"
+--     },
+--   },
+--   suggestion = {
+--     enabled = true,
+--     auto_trigger = true,
+--     debounce = 75,
+--     keymap = {
+--      accept = "<C-y>",
+--      next = "<leader>n",
+--      prev = "<leader>p",
+--      dismiss = "<C-space>",
+--     },
+--   },
+--   filetypes = {
+--     yaml = false,
+--     markdown = false,
+--     help = false,
+--     gitcommit = false,
+--     gitrebase = false,
+--     hgcommit = false,
+--     svn = false,
+--     cvs = false,
+--     ["."] = false,
+--   },
+--   copilot_node_command = 'node', -- Node version must be < 18
+--   plugin_manager_path = vim.fn.stdpath("data") .. "/site/pack/packer",
+--   server_opts_overrides = {},
+-- })
+
+-- Not Currently Recommended
+
+local has_words_before = function()
+  if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_text(0, line-1, 0, line-1, col, {})[1]:match("^%s*$") == nil
+end
+
+
+-- clean code and better performance 
+-- local ok, _G
+
 local cmp = require "cmp"
 
 cmp.setup {
   mapping = {
-    ["<C-n>"] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
-    ["<C-p>"] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
-    ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-    ["<C-f>"] = cmp.mapping.scroll_docs(4),
-    ["<C-e>"] = cmp.mapping.abort(),
-    ["<c-y>"] = cmp.mapping(
+    ["<C-n>"] = cmp.mapping.select_next_item {},
+    ["<C-p>"] = cmp.mapping.select_prev_item {},
+    ["<C-u>"] = cmp.mapping.scroll_docs(-4),
+    ["<C-d>"] = cmp.mapping.scroll_docs(4),
+    ["<C-q>"] = cmp.mapping.abort(),
+    ["<C-y>"] = cmp.mapping(
       cmp.mapping.confirm {
         behavior = cmp.ConfirmBehavior.Insert,
         select = true,
@@ -42,7 +103,8 @@ cmp.setup {
       { "i", "c" }
     ),
 
-    ["<c-space>"] = cmp.mapping {
+    -- ["<C-Space>"] = cmp.mapping.complete(),
+    ["<C-Space>"] = cmp.mapping {
       i = cmp.mapping.complete(),
       c = function(
         _ --[[fallback]]
@@ -68,7 +130,7 @@ cmp.setup {
     -- },
 
     -- Testing
-    ["<c-q>"] = cmp.mapping.confirm {
+    ["<leader>gq"] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
@@ -101,11 +163,11 @@ cmp.setup {
   --        (more?)
   sources = {
     { name = "gh_issues" },
+    { name = "copilot" },
 
     -- Youtube: Could enable this only for lua, but nvim_lua handles that already.
     { name = "nvim_lua" },
-    { name = "cmp_tabnine" },
-    { name = "tn" },
+    -- { name = "tn" },
 
     { name = "nvim_lsp" },
     { name = "path" },
@@ -155,9 +217,8 @@ cmp.setup {
       with_text = true,
       menu = {
         buffer = "[buf]",
+        copilot = "[Copilot]",
         luasnip = "[snip]",
-        cmp_tabnine = "[TabNine]",
-        tn = "[tn]",
         nvim_lsp = "[LSP]",
         nvim_lua = "[api]",
         path = "[path]",
@@ -167,44 +228,23 @@ cmp.setup {
   },
 
   experimental = {
+
     -- I like the new menu better! Nice work hrsh7th
     native_menu = false,
 
     -- Let's play with this for a day or two
-    ghost_text = false,
+    ghost_text = true,
   },
 }
 
 cmp.setup.cmdline("/", {
   completion = {
-    -- Might allow this later, but I don't like it right now really.
-    -- Although, perhaps if it just triggers w/ @ then we could.
-    --
-    -- I will have to come back to this.
     autocomplete = false,
   },
   sources = cmp.config.sources({
     { name = "nvim_lsp_document_symbol" },
   }, {
     -- { name = "buffer", keyword_length = 5 },
-  }),
-})
-
-cmp.setup.cmdline(":", {
-  completion = {
-    autocomplete = false,
-  },
-
-  sources = cmp.config.sources({
-    {
-      name = "path",
-    },
-  }, {
-    {
-      name = "cmdline",
-      max_item_count = 20,
-      keyword_length = 4,
-    },
   }),
 })
 
@@ -221,14 +261,6 @@ autocmd FileType lua lua require'cmp'.setup.buffer {
 \   },
 \ }
 --]]
-
--- Add vim-dadbod-completion in sql files
-_ = vim.cmd [[
-  augroup DadbodSql
-    au!
-    autocmd FileType sql,mysql,plsql lua require('cmp').setup.buffer { sources = { { name = 'vim-dadbod-completion' } } }
-  augroup END
-]]
 
 _ = vim.cmd [[
   augroup CmpZsh

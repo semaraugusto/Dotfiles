@@ -47,7 +47,7 @@ function M.edit_neovim()
   opts_with_preview = {
     prompt_title = "~ dotfiles ~",
     shorten_path = false,
-    cwd = "~/.config/nvim",
+    cwd = "home/semar/.config/nvim",
 
     layout_strategy = "flex",
     layout_config = {
@@ -87,64 +87,64 @@ function M.edit_neovim()
   require("telescope.builtin").find_files(opts_with_preview)
 end
 
-function M.find_nvim_source()
-  require("telescope.builtin").find_files {
-    prompt_title = "~ nvim ~",
-    shorten_path = false,
-    cwd = "~/build/neovim/",
+-- function M.find_nvim_source()
+--   require("telescope.builtin").find_files {
+--     prompt_title = "~ nvim ~",
+--     shorten_path = false,
+--     cwd = "~/build/neovim/",
+--
+--     layout_strategy = "horizontal",
+--     layout_config = {
+--       preview_width = 0.35,
+--     },
+--   }
+-- end
 
-    layout_strategy = "horizontal",
-    layout_config = {
-      preview_width = 0.35,
-    },
-  }
-end
-
-function M.sourcegraph_find()
-  require("telescope.builtin").find_files {
-    prompt_title = "~ sourcegraph ~",
-    shorten_path = false,
-    cwd = "~/sourcegraph/",
-
-    layout_strategy = "horizontal",
-    layout_config = {
-      width = 0.25,
-      preview_width = 0.65,
-    },
-  }
-end
-
-function M.sourcegraph_main_find()
-  require("telescope.builtin").find_files {
-    prompt_title = "~ main: sourcegraph ~",
-    shorten_path = false,
-    cwd = "~/sourcegraph/sourcegraph.git/main/",
-
-    layout_strategy = "horizontal",
-    layout_config = {
-      width = 0.95,
-      preview_width = 0.65,
-    },
-  }
-end
-
-function M.sourcegraph_about_find()
-  require("telescope.builtin").find_files {
-    prompt_tiles = [[\ Sourcegraph About: Files /]],
-    cwd = "~/sourcegraph/about/handbook/",
-
-    sorter = require("telescope").extensions.fzy_native.native_fzy_sorter(),
-  }
-end
-
-function M.sourcegraph_about_grep()
-  require("telescope.builtin").live_grep {
-    prompt_tiles = [[\ Sourcegraph About: Files /]],
-    cwd = "~/sourcegraph/about/",
-
-    -- sorter = require('telescope').extensions.fzy_native.native_fzy_sorter(),
-  }
-end
+-- function M.sourcegraph_find()
+--   require("telescope.builtin").find_files {
+--     prompt_title = "~ sourcegraph ~",
+--     shorten_path = false,
+--     cwd = "~/sourcegraph/",
+--
+--     layout_strategy = "horizontal",
+--     layout_config = {
+--       width = 0.25,
+--       preview_width = 0.65,
+--     },
+--   }
+-- end
+--
+-- function M.sourcegraph_main_find()
+--   require("telescope.builtin").find_files {
+--     prompt_title = "~ main: sourcegraph ~",
+--     shorten_path = false,
+--     cwd = "~/sourcegraph/sourcegraph.git/main/",
+--
+--     layout_strategy = "horizontal",
+--     layout_config = {
+--       width = 0.95,
+--       preview_width = 0.65,
+--     },
+--   }
+-- end
+--
+-- function M.sourcegraph_about_find()
+--   require("telescope.builtin").find_files {
+--     prompt_tiles = [[\ Sourcegraph About: Files /]],
+--     cwd = "~/sourcegraph/about/handbook/",
+--
+--     sorter = require("telescope").extensions.fzy_native.native_fzy_sorter(),
+--   }
+-- end
+--
+-- function M.sourcegraph_about_grep()
+--   require("telescope.builtin").live_grep {
+--     prompt_tiles = [[\ Sourcegraph About: Files /]],
+--     cwd = "~/sourcegraph/about/",
+--
+--     -- sorter = require('telescope').extensions.fzy_native.native_fzy_sorter(),
+--   }
+-- end
 
 -- TODO: Should work on a wiki at some point....
 --function M.sourcegraph_tips()

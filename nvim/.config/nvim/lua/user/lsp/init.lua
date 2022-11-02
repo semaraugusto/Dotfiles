@@ -14,6 +14,57 @@ if not ok then
   nvim_status = nil
 end
 
+require('copilot').setup({
+  panel = {
+    enabled = true,
+    auto_refresh = false,
+    keymap = {
+      jump_prev = "<C-n>",
+      jump_next = "<C-p>",
+      accept = "<C-y>",
+      refresh = "gr",
+      open = "<leader>go"
+    },
+  },
+  preview = {
+    enabled = true,
+    keymap = {
+      jump_prev = "[[",
+      jump_next = "]]",
+      accept = "<CR>",
+      refresh = "gr",
+      open = "<leader>go"
+    },
+  },
+  suggestion = {
+    enabled = true,
+    auto_trigger = false,
+    debounce = 75,
+  },
+  filetypes = {
+    yaml = false,
+    markdown = false,
+    help = false,
+    gitcommit = false,
+    gitrebase = false,
+    hgcommit = false,
+    svn = false,
+    cvs = false,
+    ["."] = false,
+  },
+  copilot_node_command = 'node', -- Node version must be < 18
+  plugin_manager_path = vim.fn.stdpath("data") .. "/site/pack/packer",
+  server_opts_overrides = {
+    trace = "verbose",
+    settings = {
+      advanced = {
+        listCount = 10, -- #completions for panel
+        inlineSuggestCount = 3, -- #completions for getCompletions
+      }
+    },
+  }
+})
+
 function dump_server_capabilities(o)
    if type(o) == 'table' then
       local s = '{ '
@@ -53,6 +104,7 @@ local buf_inoremap = function(opts)
 
   imap(opts)
 end
+
 -- local neoclip = require"neoclip".setup()
 local telescope_mapper = require "user.telescope.mappings"
 local handlers = require "user.lsp.handlers"
@@ -74,29 +126,26 @@ local custom_init = function(client)
   client.config.flags.allow_incremental_sync = true
 end
 
+local format_on_save = function(client)
+  vim.cmd [[
+    augroup lsp_buf_format
+      au! BufWritePre <buffer>
+      autocmd BufWritePre <buffer> :lua vim.lsp.buf.format()
+    augroup END
+  ]]
+end
 local filetype_attach = setmetatable({
-  go = function(client)
-    vim.cmd [[
-      augroup lsp_buf_format
-        au! BufWritePre <buffer>
-        autocmd BufWritePre <buffer> :lua vim.lsp.buf.format()
-      augroup END
-    ]]
-  end,
+  go = format_on_save,
+  typescript = format_on_save,
+  python = format_on_save,
 
   rust = function()
     buf_nnoremap{"<space>wf", vim.lsp.buf.workspace_symbol}
-
     require("luasnip.loaders.from_snipmate").lazy_load({ paths = { "~/.config/nvim/lua/user/snips/snippets/" } })
     require"luasnip".filetype_extend("rust", {"rust-analyzer"})
-    vim.cmd [[
-      augroup lsp_buf_format
-        au! BufWritePre <buffer>
-        autocmd BufWritePre <buffer> :lua vim.lsp.buf.format()
-      augroup END
-    ]]
+    format_on_save()
   end,
-}, {
+  }, {
   __index = function()
     return function() end
   end,
@@ -110,9 +159,11 @@ local custom_attach = function(client)
     nvim_status.on_attach(client)
   end
 
+  buf_nnoremap { "<leader>e", vim.diagnostic.open_float }
+
   buf_inoremap { "<c-s>", vim.lsp.buf.signature_help }
 
-  buf_nnoremap { "<space>gr", vim.lsp.buf.rename }
+  buf_nnoremap { "<leader>gr", vim.lsp.buf.rename }
   buf_nnoremap { "<space>ga", vim.lsp.buf.code_action }
 
   buf_nnoremap { "gd", vim.lsp.buf.definition }
@@ -124,16 +175,15 @@ local custom_attach = function(client)
   buf_nnoremap { "<space>lr", "<cmd>lua R('user.lsp.codelens').run()<CR>" }
   buf_nnoremap { "<space>rr", "<cmd>LspRestart<CR>" }
 
-  buf_nnoremap { "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>" }
-  buf_nnoremap { "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>" }
+  buf_nnoremap { "[d", vim.diagnostic.goto_prev }
+  buf_nnoremap { "]d", vim.diagnostic.goto_next }
 
-  buf_nnoremap { "<leader>e", vim.lsp.diagnostic.show_line_diagnostics }
   if client.server_capabilities.documentFormattingProvider then
-    buf_nnoremap {'<leader>f', '<cmd>lua vim.lsp.buf.format({ async = true })<CR>'}
+    buf_nnoremap {'<leader>F', '<cmd>lua vim.lsp.buf.format({ async = true })<CR>'}
   end
-  if client.server_capabilities.documentRangeFormattingProvider then
-    buf_vnoremap {'<leader>f', '<cmd>lua vim.lsp.buf.range_formatting()<CR>'}
-  end
+  -- if client.server_capabilities.documentRangeFormattingProvider then
+  --   buf_vnoremap {'<leader>f', '<cmd>lua vim.lsp.buf.range_formatting()<CR>'}
+  -- end
 
   -- buf_nnoremap { "gr", vim.lsp.buf.references }
   -- buf_nnoremap { "gI", vim.lsp.buf.implementation }
@@ -159,52 +209,50 @@ local custom_attach = function(client)
       augroup END
     ]]
   end
-
-  if client.server_capabilities.codeLensProvider then
-    if filetype ~= "elm" then
-      vim.cmd [[
-        augroup lsp_document_codelens
-          au! * <buffer>
-          autocmd BufEnter ++once         <buffer> lua require"vim.lsp.codelens".refresh()
-          autocmd BufWritePost,CursorHold <buffer> lua require"vim.lsp.codelens".refresh()
-        augroup END
-      ]]
-    end
-  end
-
   -- Attach any filetype specific options to the client
   filetype_attach[filetype](client)
 end
 
 local updated_capabilities = vim.lsp.protocol.make_client_capabilities()
 if nvim_status then
-  -- vim.notify (dump_server_capabilities(updated_capabilities));
-  -- vim.notify (dump_server_capabilities(nvim_status.capabilities));
   updated_capabilities = vim.tbl_deep_extend("keep", updated_capabilities, nvim_status.capabilities)
 end
 updated_capabilities.textDocument.codeLens = { dynamicRegistration = false }
-updated_capabilities = require("cmp_nvim_lsp").update_capabilities(updated_capabilities)
+updated_capabilities = require("cmp_nvim_lsp").default_capabilities(updated_capabilities)
 
 -- TODO: check if this is the problem.
 updated_capabilities.textDocument.completion.completionItem.insertReplaceSupport = false
-
--- vim.lsp.buf_request(0, "textDocument/codeLens", { textDocument = vim.lsp.util.make_text_document_params() })
 
 local servers = {
   gdscript = true,
   graphql = true,
   html = true,
-  pyright = true,
   vimls = true,
   yamlls = true,
   eslint = true,
   hls = true,
-  solang = true,
+  solidity = true,
   bashls = true,
-  -- jsonls = true,
+  marksman = true,
+  jsonls = true,
 
   cmake = (1 == vim.fn.executable "cmake-language-server"),
   dartls = pcall(require, "flutter-tools"),
+
+  pylsp = {
+    settings = {
+      pylsp = {
+        plugins = {
+          pycodestyle = {
+            enabled = true;
+          };
+          pyls_mypy = {
+            enabled = true;
+          };
+        }
+      }
+    };
+  },
 
   clangd = {
     cmd = {
@@ -279,7 +327,61 @@ local servers = {
       ts_util.setup_client(client)
     end,
   },
+  sumneko_lua = {
+    settings = {
+      Lua = {
+        runtime = {
+          -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+          version = 'LuaJIT',
+        },
+        diagnostics = {
+          globals = {
+            -- vim
+            "vim",
+
+            -- Busted
+            "describe",
+            "it",
+            "before_each",
+            "after_each",
+            "teardown",
+            "pending",
+            "clear",
+
+            -- Colorbuddy
+            "Color",
+            "c",
+            "Group",
+            "g",
+            "s",
+
+            -- Custom
+            "RELOAD",
+          },
+        },
+
+        workspace = {
+          -- Make the server aware of Neovim runtime files
+          library = vim.api.nvim_get_runtime_file("", true),
+        },
+        telemetry = {
+          enable = false,
+        },
+      },
+    },
+    on_attach = function(client)
+      custom_attach(client)
+    end,
+  }
 }
+-- sumneko_env = {
+  -- cmd_env = {
+  --   PATH = process.extend_path {
+  --     path.concat { vim.fn.stdpath "data", "lsp_servers", "sumneko_lua", "extension", "server", "bin" },
+  --   },
+  -- },
+-- }
+
 
 local setup_server = function(server, config)
   if not config then
@@ -312,18 +414,57 @@ lspconfig.jedi_language_server.setup {
   server_capabilities = updated_capabilities,
 }
 
-local use_null = true
-if use_null then
-  require("null-ls").setup {
-    sources = {
-      -- require("null-ls").builtins.formatting.stylua,
-      -- require("null-ls").builtins.diagnostics.eslint,
-      -- require("null-ls").builtins.completion.spell,
-      -- require("null-ls").builtins.diagnostics.selene,
-      require("null-ls").builtins.formatting.prettierd,
-    },
-  }
-end
+-- setup_server("sumneko_lua", {
+--   settings = {
+--     Lua = {
+--       runtime = {
+--         -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+--         version = 'LuaJIT',
+--       },
+--       diagnostics = {
+--         globals = {
+--           -- vim
+--           "vim",
+--
+--           -- Busted
+--           "describe",
+--           "it",
+--           "before_each",
+--           "after_each",
+--           "teardown",
+--           "pending",
+--           "clear",
+--
+--           -- Colorbuddy
+--           "Color",
+--           "c",
+--           "Group",
+--           "g",
+--           "s",
+--
+--           -- Custom
+--           "RELOAD",
+--         },
+--       },
+--
+--       workspace = {
+--         -- Make the server aware of Neovim runtime files
+--         library = vim.api.nvim_get_runtime_file("", true),
+--       },
+--       telemetry = {
+--         enable = false,
+--       },
+--     },
+--   },
+-- })
+
+require("null-ls").setup({
+    -- sources = {
+        -- require("null-ls").builtins.formatting.stylua,
+        require("null-ls").builtins.diagnostics.eslint,
+        -- require("null-ls").builtins.completion.spell,
+    -- },
+})
 
 
 return {

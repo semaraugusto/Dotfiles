@@ -28,13 +28,13 @@ local list = require("nvim-treesitter.parsers").get_parser_configs()
 -- list.lua = nil
 
 -- :h nvim-treesitter-query-extensions
-local custom_captures = {
-  ["function.call.lua"] = "LuaFunctionCall",
-  ["function.bracket"] = "Type",
-  ["namespace.type"] = "TSNamespaceType",
-}
+-- local custom_captures = {
+--   ["function.call.lua"] = "LuaFunctionCall",
+--   ["function.bracket"] = "Type",
+--   -- ["namespace.type"] = "TSNamespaceType",
+-- }
 
-require("nvim-treesitter.highlight").set_custom_captures(custom_captures)
+require("nvim-treesitter.highlight") -- .set_custom_captures(custom_captures)
 
 -- alt+<space>, alt+p -> swap next
 -- alt+<backspace>, alt+p -> swap previous
@@ -78,9 +78,9 @@ local _ = require("nvim-treesitter.configs").setup {
 
   highlight = {
     enable = true,
-    use_languagetree = false,
+    use_languagetree = true,
     -- disable = { "json" },
-    custom_captures = custom_captures,
+    -- custom_captures = custom_captures,
   },
 
   refactor = {
@@ -177,7 +177,7 @@ local _ = require("nvim-treesitter.configs").setup {
   },
 
   playground = {
-    enable = true,
+    -- enable = true,
     updatetime = 25,
     persist_queries = true,
     keybindings = {
@@ -207,5 +207,5 @@ end
 
 -- vim.cmd [[highlight IncludedC guibg=#373b41]]
 
-vim.cmd [[nnoremap <space>tp :TSPlaygroundToggle<CR>]]
-vim.cmd [[nnoremap <space>th :TSHighlightCapturesUnderCursor<CR>]]
+-- vim.cmd [[nnoremap <space>tp :TSPlaygroundToggle<CR>]]
+-- vim.cmd [[nnoremap <space>th :TSHighlightCapturesUnderCursor<CR>]]

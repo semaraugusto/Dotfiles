@@ -103,6 +103,7 @@ return require("packer").startup {
     -- use "tamago324/lir.nvim"
     use "nvim-lua/plenary.nvim" 
     use "f-person/git-blame.nvim"
+    use "lervag/vimtex"
 
     -- Optional
     use {
@@ -294,7 +295,34 @@ return require("packer").startup {
     }
 
     -- TODO: Eventually statusline should consume this.
-    use "mkitt/tabline.vim"
+    use {
+      'kdheepak/tabline.nvim',
+      config = function()
+        require'tabline'.setup {
+          -- Defaults configuration options
+          enable = true,
+          options = {
+          -- If lualine is installed tabline will use separators configured in lualine by default.
+          -- These options can be used to override those settings.
+            section_separators = {'', ''},
+            component_separators = {'', ''},
+            max_bufferline_percent = 66, -- set to nil by default, and it uses vim.o.columns * 2/3
+            show_tabs_always = false, -- this shows tabs only when there are more than one tab or if the first tab is named
+            show_devicons = true, -- this shows devicons in buffer section
+            show_bufnr = false, -- this appends [bufnr] to buffer section,
+            show_filename_only = false, -- shows base filename only instead of relative path in filename
+            modified_icon = "+ ", -- change the default modified icon
+            modified_italic = false, -- set to true by default; this determines whether the filename turns italic if modified
+            show_tabs_only = false, -- this shows only tabs instead of tabs + buffers
+          }
+        }
+        vim.cmd[[
+          set guioptions-=e " Use showtabline in gui vim
+          set sessionoptions+=tabpages,globals " store tabpages and globals in session
+        ]]
+      end,
+      requires = { { 'hoob3rt/lualine.nvim', opt=true }, {'kyazdani42/nvim-web-devicons', opt = true} }
+    }
 
     if is_linux then
       use "yamatsum/nvim-web-nonicons"
@@ -404,7 +432,8 @@ return require("packer").startup {
     use "hrsh7th/cmp-nvim-lsp"
     use "hrsh7th/cmp-nvim-lsp-document-symbol"
     -- use { "tzachar/cmp-tabnine", run = "./install.sh" }
- 	use {'tzachar/cmp-tabnine', run='./install.sh', requires = 'hrsh7th/nvim-cmp'}
+ 	-- use {'tzachar/cmp-tabnine', run='./install.sh', requires = 'hrsh7th/nvim-cmp'}
+    -- ~/.config/nvim/pack/github/start/copilot.vim
     -- use "tzachar/cmp-tabnine", { 'do': './install.sh' }
     use "simrat39/rust-tools.nvim"
     use "rust-lang/rust.vim"
@@ -414,6 +443,14 @@ return require("packer").startup {
     use "saadparwaiz1/cmp_luasnip"
     use "rafamadriz/friendly-snippets"
     use "tamago324/cmp-zsh"
+    use { "zbirenbaum/copilot.lua" }
+    use {
+      "zbirenbaum/copilot-cmp",
+      after = { "copilot.lua" },
+      config = function ()
+        require("copilot_cmp").setup()
+      end
+    }
 
     -- Comparators
     use "lukas-reineke/cmp-under-comparator"
@@ -436,9 +473,6 @@ return require("packer").startup {
     -- Cool tags based viewer
     --   :Vista  <-- Opens up a really cool sidebar with info about file.
     use { "liuchengxu/vista.vim", cmd = "Vista" }
-
-    -- Find and replace
-    use "windwp/nvim-spectre"
 
     -- Debug adapter protocol
     use "mfussenegger/nvim-dap"
@@ -473,6 +507,7 @@ return require("packer").startup {
     local_use("nvim-treesitter", "nvim-treesitter")
     use "nvim-treesitter/playground"
     use "vigoux/architext.nvim"
+    use "folke/todo-comments.nvim"
 
     -- TODO: YouTube Highlight
     use "danymat/neogen"
@@ -542,7 +577,11 @@ return require("packer").startup {
     use "tpope/vim-characterize"
     use { "tpope/vim-dispatch", cmd = { "Dispatch", "Make" } }
     use "flazz/vim-colorschemes"
-    use { "catppuccin/nvim", as = "catppuccin" }
+    -- use { "catppuccin/nvim", as = "catppuccin" }
+    use {
+      "catppuccin/nvim",
+      as = "catppuccin",
+    }
 
     use "numToStr/Comment.nvim"
 
@@ -634,10 +673,10 @@ return require("packer").startup {
     -- local_use 'wander.nvim'
     -- local_use 'riki.nvim'
 
-    use {
-      "Vhyrro/neorg",
-      -- branch = "unstable"
-    }
+    -- use {
+    --   "Vhyrro/neorg",
+    --   -- tag = "0.0.12"
+    -- }
 
     -- pretty sure I'm done w/ these
     -- local_use 'vlog.nvim'

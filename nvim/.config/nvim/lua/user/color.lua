@@ -44,35 +44,49 @@
 -- -- Hello
 -- Group.new("TSTitle", c.blue)
 
--- require("catppuccin").setup {
---     -- flavour = "mocha", -- mocha, macchiato, frappe, latte
---     term_colors = true,
---     dim_inactive = {
---       enabled = true,
---       shade = "dark",
---       percentage = 0.25,
---     },
---     styles = {
---       comments = { "italic" },
---       conditionals = { "italic" },
---       loops = {},
---       functions = {},
---       keywords = {},
---       strings = {},
---       variables = {},
---       numbers = {},
---       booleans = {},
---       properties = {},
---       types = {},
---       operators = {},
---     },
---     integrations = {
---       cmp = true,
---       gitsigns = true,
---       nvimtree = true,
---       telescope = true,
---       treesitter = true,
---       -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
---     }
--- }
--- vim.api.nvim_command "colorscheme catppuccin"
+require("catppuccin").setup {
+ --  	color_overrides = {
+	-- 	all = {
+	-- 		text = "#ffffff",
+	-- 	},
+	-- 	latte = {
+	-- 		base = "#ff0000",
+	-- 		mantle = "#242424",
+	-- 		crust = "#474747",
+	-- 	},
+	-- 	frappe = {},
+	-- 	macchiato = {},
+	-- 	mocha = {},
+	-- },
+    flavour = "frappe", -- mocha, macchiato, frappe, latte
+    term_colors = true,
+    dim_inactive = {
+      enabled = true,
+      shade = "dark",
+      percentage = 0.25,
+    },
+    styles = {
+      comments = { "italic" },
+      conditionals = { "italic" },
+      loops = {},
+      functions = {},
+      keywords = {},
+      strings = {},
+      variables = {},
+      numbers = {},
+      booleans = {},
+      properties = {},
+      types = {},
+      operators = {},
+    },
+    integrations = {
+      cmp = true,
+      gitsigns = true,
+      nvimtree = true,
+      telescope = true,
+      treesitter = true,
+      -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
+    }
+}
+
+vim.api.nvim_command "colorscheme catppuccin"

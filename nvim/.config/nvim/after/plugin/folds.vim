@@ -19,4 +19,4 @@ function! SuperFoldToggle()
     endif
 endfunction
 
-nnoremap <silent> <space>t <CMD>call SuperFoldToggle()<CR>
+nnoremap <silent> <leader>t <CMD>call SuperFoldToggle()<CR>
